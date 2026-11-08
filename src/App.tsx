@@ -10,6 +10,7 @@ import { DashboardPage } from './pages/DashboardPage.js';
 import { AuthPage } from './pages/AuthPage.js';
 import { CheckoutSimulationPage } from './pages/CheckoutSimulationPage.js';
 import { ExtensionDownloadPage } from './pages/ExtensionDownloadPage.js';
+import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage.js';
 
 export const App: React.FC = () => {
   return (
@@ -26,6 +27,7 @@ export const App: React.FC = () => {
               <Route path="/auth" element={<AuthPage />} />
               <Route path="/checkout-simulation" element={<CheckoutSimulationPage />} />
               <Route path="/extension" element={<ExtensionDownloadPage />} />
+              <Route path="/privacy" element={<PrivacyPolicyPage />} />
             </Routes>
           </main>
           <Footer />

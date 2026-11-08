@@ -38,7 +38,7 @@ export const Footer: React.FC = () => {
             <li><a href="#faq" className="hover:text-sky-400 transition-colors">Frequently Asked Questions</a></li>
             <li><a href="https://open.er-api.com" target="_blank" rel="noreferrer" className="hover:text-sky-400 transition-colors inline-flex items-center gap-1">Exchange Rates API <ExternalLink className="w-3 h-3" /></a></li>
             <li><a href="https://dodopayments.com" target="_blank" rel="noreferrer" className="hover:text-sky-400 transition-colors inline-flex items-center gap-1">Dodo Payments <ExternalLink className="w-3 h-3" /></a></li>
-            <li><span className="text-slate-500">Privacy & Terms</span></li>
+            <li><Link to="/privacy" className="hover:text-sky-400 transition-colors">Privacy Policy</Link></li>
           </ul>
         </div>
       </div>
