@@ -147,15 +147,15 @@ export const InteractiveConverterCard: React.FC<Props> = ({
   const toMeta = CURRENCIES[toCode];
 
   return (
-    <div className={`glass-panel rounded-2xl p-6 sm:p-8 border border-slate-800 shadow-2xl ${className}`}>
+    <div className={`bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm ${className}`}>
       {/* Top Header & Segmented Mode Control */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <span className="text-xs uppercase tracking-wider font-bold text-sky-400 flex items-center gap-1.5">
-            <Zap className="w-4 h-4 fill-sky-400" />
+          <span className="text-xs uppercase tracking-wider font-bold text-blue-600 flex items-center gap-1.5">
+            <Zap className="w-4 h-4 fill-blue-600" />
             Dual Exchange Rate Engine
           </span>
-          <span className="text-xs text-slate-400 mt-0.5 block">
+          <span className="text-xs text-slate-500 mt-0.5 block">
             {rateMode === 'automatic'
               ? 'Using Live Market Spot Rates (Updated Hourly)'
               : `Using Custom Rate Profile: ${activeProfile.name}`}
@@ -165,14 +165,14 @@ export const InteractiveConverterCard: React.FC<Props> = ({
         {showEngineSelector && (
           <div className="flex items-center gap-2">
             {/* Segmented Control */}
-            <div className="flex bg-slate-900 border border-slate-800 p-1 rounded-xl">
+            <div className="flex bg-slate-100 border border-slate-200 p-1 rounded-xl">
               <button
                 type="button"
                 onClick={() => setRateMode('automatic')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
                   rateMode === 'automatic'
-                    ? 'bg-sky-500/20 text-sky-300 border border-sky-500/40 shadow-sm'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-white text-blue-600 shadow-sm border border-slate-200'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 <span>⚡ Automatic</span>
@@ -183,8 +183,8 @@ export const InteractiveConverterCard: React.FC<Props> = ({
                 onClick={() => setRateMode('manual')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
                   rateMode === 'manual'
-                    ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-amber-100 text-amber-800 shadow-sm border border-amber-200'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 <span>✏️ Manual</span>
@@ -194,17 +194,17 @@ export const InteractiveConverterCard: React.FC<Props> = ({
             {rateMode === 'manual' ? (
               <button
                 onClick={handleRestoreAutomatic}
-                className="text-xs px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center gap-1 border border-slate-700 transition-colors"
+                className="text-xs px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center gap-1 border border-slate-200 transition-colors"
                 title="Restore Automatic Live Rates"
               >
-                <RotateCcw className="w-3.5 h-3.5 text-sky-400" />
+                <RotateCcw className="w-3.5 h-3.5 text-blue-600" />
                 <span className="hidden sm:inline">Restore Auto</span>
               </button>
             ) : (
               <button
                 onClick={performConvert}
                 disabled={isLoading}
-                className="text-xs text-slate-400 hover:text-white flex items-center gap-1 transition-colors px-2 py-1"
+                className="text-xs text-slate-600 hover:text-slate-900 flex items-center gap-1 transition-colors px-2 py-1"
                 title="Refresh rates"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
@@ -217,15 +217,15 @@ export const InteractiveConverterCard: React.FC<Props> = ({
 
       {/* Manual Mode Active Profile & Inline Override Bar */}
       {rateMode === 'manual' && (
-        <div className="mb-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 flex flex-col md:flex-row md:items-center justify-between gap-4 animate-in fade-in">
+        <div className="mb-6 p-4 rounded-xl bg-amber-50 border border-amber-200 flex flex-col md:flex-row md:items-center justify-between gap-4 animate-in fade-in">
           <div className="flex items-center gap-3">
-            <span className="text-xs font-bold text-amber-300 whitespace-nowrap flex items-center gap-1">
+            <span className="text-xs font-bold text-amber-800 whitespace-nowrap flex items-center gap-1">
               <Sliders className="w-3.5 h-3.5" /> Active Profile:
             </span>
             <select
               value={activeProfileId}
               onChange={(e) => setActiveProfileId(e.target.value)}
-              className="bg-slate-900 border border-amber-500/40 text-xs font-semibold text-white px-2.5 py-1.5 rounded-lg outline-none cursor-pointer"
+              className="bg-white border border-amber-300 text-xs font-semibold text-slate-800 px-2.5 py-1.5 rounded-lg outline-none cursor-pointer"
             >
               {profiles.map((p) => (
                 <option key={p.id} value={p.id}>
@@ -236,7 +236,7 @@ export const InteractiveConverterCard: React.FC<Props> = ({
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs text-amber-200/80 font-mono whitespace-nowrap">
+            <span className="text-xs text-slate-600 font-mono whitespace-nowrap">
               1 {fromCode} =
             </span>
             <input
@@ -245,12 +245,12 @@ export const InteractiveConverterCard: React.FC<Props> = ({
               value={inlineRateInput}
               onChange={(e) => setInlineRateInput(e.target.value)}
               placeholder="Custom Rate"
-              className="w-28 bg-slate-900 border border-amber-500/40 text-amber-300 font-bold text-xs px-2.5 py-1.5 rounded-lg outline-none"
+              className="w-28 bg-white border border-amber-300 text-amber-900 font-bold text-xs px-2.5 py-1.5 rounded-lg outline-none"
             />
-            <span className="text-xs text-amber-200/80 font-mono">{toCode}</span>
+            <span className="text-xs text-slate-600 font-mono">{toCode}</span>
             <button
               onClick={handleSaveInlineRate}
-              className="px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition-colors"
+              className="px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white transition-colors shadow-sm"
             >
               Save Rate
             </button>
@@ -260,14 +260,14 @@ export const InteractiveConverterCard: React.FC<Props> = ({
 
       {/* Missing Manual Rate Alert Banner */}
       {manualError && (
-        <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-red-300 animate-in fade-in">
+        <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-red-700 animate-in fade-in">
           <div className="flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 flex-shrink-0 text-red-400" />
+            <AlertCircle className="w-4 h-4 flex-shrink-0 text-red-500" />
             <span>{manualError}</span>
           </div>
           <button
             onClick={handleRestoreAutomatic}
-            className="px-3 py-1.5 rounded-lg font-bold bg-red-500/20 text-red-200 hover:bg-red-500/30 border border-red-500/40 transition-colors whitespace-nowrap self-start sm:self-center"
+            className="px-3 py-1.5 rounded-lg font-bold bg-red-100 text-red-700 hover:bg-red-200 border border-red-200 transition-colors whitespace-nowrap self-start sm:self-center"
           >
             Switch to Automatic
           </button>
@@ -277,14 +277,14 @@ export const InteractiveConverterCard: React.FC<Props> = ({
       {/* Inputs Grid */}
       <div className="grid grid-cols-1 md:grid-cols-11 gap-4 items-center mb-6">
         {/* From Amount & Currency */}
-        <div className="md:col-span-5 bg-slate-900/90 border border-slate-800 rounded-xl p-3 focus-within:border-sky-500 transition-colors">
-          <label className="text-[11px] font-semibold text-slate-400 block mb-1">You Pay / Convert</label>
-          <div className="flex items-center gap-3">
+        <div className="md:col-span-5 bg-slate-50 border border-slate-200 rounded-xl p-3.5 focus-within:border-blue-500 transition-colors">
+          <label className="text-[11px] font-semibold text-slate-500 block mb-1">You Pay / Convert</label>
+          <div className="flex items-center gap-2 sm:gap-3">
             <input
               type="number"
               value={amount}
               onChange={(e) => setAmount(parseFloat(e.target.value) || 0)}
-              className="w-full bg-transparent text-xl font-bold text-white outline-none"
+              className="w-full bg-transparent text-xl font-bold text-slate-900 outline-none"
               placeholder="0.00"
               min="0"
               step="any"
@@ -292,10 +292,10 @@ export const InteractiveConverterCard: React.FC<Props> = ({
             <select
               value={fromCode}
               onChange={(e) => setFromCode(e.target.value)}
-              className="bg-slate-800 text-sm font-semibold text-white rounded-lg px-2.5 py-1.5 border border-slate-700 outline-none cursor-pointer hover:bg-slate-700/80 transition-colors"
+              className="bg-white text-xs sm:text-sm font-semibold text-slate-800 rounded-lg px-2.5 py-1.5 border border-slate-200 outline-none cursor-pointer hover:bg-slate-50 transition-colors shadow-sm"
             >
               {currencyCodes.map((code) => (
-                <option key={code} value={code} className="bg-slate-900 text-white">
+                <option key={code} value={code} className="bg-white text-slate-900">
                   {CURRENCIES[code].flag} {code}
                 </option>
               ))}
@@ -307,10 +307,10 @@ export const InteractiveConverterCard: React.FC<Props> = ({
         </div>
 
         {/* Swap Button */}
-        <div className="md:col-span-1 flex justify-center">
+        <div className="md:col-span-1 flex justify-center py-1 md:py-0">
           <button
             onClick={handleSwap}
-            className="w-10 h-10 rounded-full bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center text-sky-400 hover:text-white transition-all transform hover:rotate-180 duration-300"
+            className="w-10 h-10 rounded-full bg-white hover:bg-slate-50 border border-slate-200 flex items-center justify-center text-blue-600 shadow-sm transition-all transform hover:rotate-180 duration-300"
             title="Swap currencies"
           >
             <ArrowLeftRight className="w-4 h-4" />
@@ -318,10 +318,10 @@ export const InteractiveConverterCard: React.FC<Props> = ({
         </div>
 
         {/* To Currency */}
-        <div className="md:col-span-5 bg-slate-900/90 border border-slate-800 rounded-xl p-3 focus-within:border-sky-500 transition-colors">
-          <label className="text-[11px] font-semibold text-slate-400 block mb-1">You Receive / Target</label>
-          <div className="flex items-center gap-3">
-            <div className={`w-full text-xl font-bold truncate ${rateMode === 'manual' ? 'text-amber-300' : 'text-sky-400'}`}>
+        <div className="md:col-span-5 bg-slate-50 border border-slate-200 rounded-xl p-3.5 focus-within:border-blue-500 transition-colors">
+          <label className="text-[11px] font-semibold text-slate-500 block mb-1">You Receive / Target</label>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className={`w-full text-xl font-extrabold truncate ${rateMode === 'manual' ? 'text-amber-700' : 'text-emerald-600'}`}>
               {result !== null
                 ? `${toMeta.symbol}${result.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
                 : '...'}
@@ -329,10 +329,10 @@ export const InteractiveConverterCard: React.FC<Props> = ({
             <select
               value={toCode}
               onChange={(e) => setToCode(e.target.value)}
-              className="bg-slate-800 text-sm font-semibold text-white rounded-lg px-2.5 py-1.5 border border-slate-700 outline-none cursor-pointer hover:bg-slate-700/80 transition-colors"
+              className="bg-white text-xs sm:text-sm font-semibold text-slate-800 rounded-lg px-2.5 py-1.5 border border-slate-200 outline-none cursor-pointer hover:bg-slate-50 transition-colors shadow-sm"
             >
               {currencyCodes.map((code) => (
-                <option key={code} value={code} className="bg-slate-900 text-white">
+                <option key={code} value={code} className="bg-white text-slate-900">
                   {CURRENCIES[code].flag} {code}
                 </option>
               ))}
@@ -345,27 +345,27 @@ export const InteractiveConverterCard: React.FC<Props> = ({
       </div>
 
       {/* Result Footer Card */}
-      <div className="bg-gradient-to-r from-slate-900 via-slate-900 to-sky-950/40 rounded-xl p-4 border border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-slate-50 rounded-xl p-4 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="text-xs text-slate-400 mb-1 flex items-center gap-2">
+          <div className="text-xs text-slate-600 mb-1 flex flex-wrap items-center gap-2">
             <span>Exchange Rate:</span>
-            <span className={`font-semibold ${rateMode === 'manual' ? 'text-amber-300' : 'text-white'}`}>
+            <span className={`font-semibold ${rateMode === 'manual' ? 'text-amber-800' : 'text-slate-900'}`}>
               1 {fromCode} = {rate ? rate.toFixed(4) : '...'} {toCode}
             </span>
             {rate && (
-              <span className="text-[10px] text-slate-500">
+              <span className="text-[10px] text-slate-400">
                 (1 {toCode} = {(1 / rate).toFixed(4)} {fromCode})
               </span>
             )}
           </div>
-          <div className="text-[10px] text-slate-500 flex items-center gap-2">
+          <div className="text-[10px] text-slate-500 flex flex-wrap items-center gap-2">
             <span>Provider: {rateProvider || 'Open Exchange Rates'}</span>
             <span>&bull;</span>
             <span>
               Updated: {lastUpdated ? new Date(lastUpdated).toLocaleTimeString() : 'Live'}
             </span>
             {rateMode === 'manual' && (
-              <span className="px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 font-bold">
+              <span className="px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 font-bold border border-amber-200">
                 Custom Rate Active
               </span>
             )}
@@ -375,9 +375,9 @@ export const InteractiveConverterCard: React.FC<Props> = ({
         <button
           onClick={handleCopy}
           disabled={result === null}
-          className="flex items-center justify-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-lg bg-sky-500/10 text-sky-400 border border-sky-500/20 hover:bg-sky-500/20 transition-all disabled:opacity-50"
+          className="flex items-center justify-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 transition-all disabled:opacity-50 shadow-sm"
         >
-          {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+          {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
           <span>{isCopied ? 'Copied to Clipboard' : 'Copy Converted Result'}</span>
         </button>
       </div>

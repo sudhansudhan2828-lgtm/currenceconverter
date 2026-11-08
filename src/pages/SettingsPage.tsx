@@ -75,8 +75,8 @@ export const SettingsPage: React.FC = () => {
     <div className="bg-slate-50/50 min-h-[88vh] py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        {/* Left Sidebar */}
-        <aside className="lg:col-span-3 space-y-6">
+        {/* Left Sidebar (hidden on mobile; mobile uses top sticky sub-nav bar) */}
+        <aside className="hidden lg:block lg:col-span-3 space-y-6">
           <div className="bg-white rounded-2xl border border-slate-200 p-3 shadow-sm space-y-1">
             <Link
               to="/dashboard"
@@ -147,7 +147,7 @@ export const SettingsPage: React.FC = () => {
         </aside>
 
         {/* Main Content */}
-        <main className="lg:col-span-9 space-y-6">
+        <main className="col-span-1 lg:col-span-9 space-y-6">
           {/* Header */}
           <div>
             <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">

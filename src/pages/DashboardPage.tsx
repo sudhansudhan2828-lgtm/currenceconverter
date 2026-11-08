@@ -31,11 +31,16 @@ export const DashboardPage: React.FC = () => {
   const isPro = subscription.plan === 'pro';
   const rate = 87.12;
   const converted = (convertAmount * rate).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const freeRemaining = Math.max(0, (usage.limit || 29) - (usage.count || 0));
+  const usagePercentage = isPro ? 100 : Math.min(100, Math.round(((usage.count || 0) / (usage.limit || 29)) * 100));
 
   // Broadcast Pro plan status to Chrome/Edge extension content script
   useEffect(() => {
     if (subscription?.plan) {
       document.documentElement.setAttribute('data-hc-plan', subscription.plan);
+      try {
+        localStorage.setItem('hc_plan', subscription.plan);
+      } catch {}
       window.postMessage({
         type: 'HOVERCURRENCY_EXTENSION_SYNC',
         plan: subscription.plan,
@@ -57,8 +62,8 @@ export const DashboardPage: React.FC = () => {
     <div className="bg-slate-50/50 min-h-[88vh] py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        {/* Left Sidebar */}
-        <aside className="lg:col-span-3 space-y-6">
+        {/* Desktop Sidebar (hidden on mobile; mobile uses sticky sub-nav bar) */}
+        <aside className="hidden lg:block lg:col-span-3 space-y-6">
           <div className="bg-white rounded-2xl border border-slate-200 p-3 shadow-sm space-y-1">
             <Link
               to="/dashboard"
@@ -129,15 +134,30 @@ export const DashboardPage: React.FC = () => {
         </aside>
 
         {/* Main Content */}
-        <main className="lg:col-span-9 space-y-6">
+        <main className="col-span-1 lg:col-span-9 space-y-6">
           {/* Header */}
-          <div>
-            <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
-              Welcome back, {user?.name || 'Sudhan'} 👋
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1">
-              Here's your current rate and usage.
-            </p>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                Welcome back, {user?.name || 'Sudhan'} 👋
+              </h1>
+              <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                Here's your current rate and usage.
+              </p>
+            </div>
+
+            {/* Mobile Pro Status Pill / Upgrade Button */}
+            {!isPro && (
+              <div className="lg:hidden">
+                <Link
+                  to="/pricing"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-sm"
+                >
+                  <Crown className="w-3.5 h-3.5 text-amber-300" />
+                  <span>Upgrade to Pro – $9</span>
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Row 1: Two Top Metric Cards */}
@@ -153,12 +173,12 @@ export const DashboardPage: React.FC = () => {
                     1 USD = <span className="text-emerald-400">87.12</span> INR
                   </div>
                 </div>
-                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-white">
+                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-white shrink-0">
                   <ArrowLeftRight className="w-4 h-4" />
                 </div>
               </div>
 
-              <div className="flex items-center justify-between text-xs text-blue-100 pt-4 mt-4 border-t border-white/15">
+              <div className="flex flex-wrap items-center justify-between text-xs text-blue-100 pt-4 mt-4 border-t border-white/15 gap-2">
                 <span className="inline-flex items-center gap-1.5 font-semibold text-emerald-300">
                   <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
                   Fresh (24h)
@@ -184,14 +204,14 @@ export const DashboardPage: React.FC = () => {
                 <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
                   <div 
                     className={`h-full rounded-full transition-all duration-500 ${isPro ? 'bg-gradient-to-r from-blue-600 to-indigo-600 w-full' : 'bg-blue-600'}`}
-                    style={isPro ? { width: '100%' } : { width: `${Math.min(100, (usage.count / 29) * 100)}%` }}
+                    style={{ width: `${usagePercentage}%` }}
                   />
                 </div>
               </div>
 
-              <div className="flex items-center justify-between text-xs">
+              <div className="flex flex-wrap items-center justify-between text-xs gap-2">
                 <span className="text-slate-500 font-medium">
-                  {isPro || !usage.remaining || usage.remaining === Infinity ? 'Unlimited remaining' : `${usage.remaining} remaining`}
+                  {isPro ? 'Unlimited conversions remaining' : `${freeRemaining} free remaining`}
                 </span>
                 <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${
                   isPro 

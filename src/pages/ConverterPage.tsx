@@ -171,16 +171,16 @@ export const ConverterPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12 animate-fade-in">
       {/* Title */}
-      <div className="text-center max-w-2xl mx-auto">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-sky-500/10 text-sky-400 border border-sky-500/20 mb-3">
+      <div className="text-center max-w-2xl mx-auto space-y-2">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
           <TrendingUp className="w-3.5 h-3.5" /> Dual Exchange Rate Engine
         </div>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
           Currency Converter Calculator
         </h1>
-        <p className="text-slate-400 text-sm mt-2">
+        <p className="text-slate-600 text-sm mt-2">
           Switch seamlessly between <strong>Live Automatic Rates</strong> and <strong>Custom Manual Rate Profiles</strong> with institutional precision.
         </p>
       </div>
@@ -191,24 +191,24 @@ export const ConverterPage: React.FC = () => {
       </div>
 
       {/* MANUAL RATE PROFILES & BULK IMPORTER SECTION */}
-      <div className="glass-panel rounded-3xl p-6 sm:p-8 border border-slate-800 space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+      <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
           <div>
-            <h3 className="text-lg font-bold text-white flex items-center gap-2">
-              <Sliders className="w-5 h-5 text-amber-400" />
-              Manual Rate Profiles & Bulk Table Importer
+            <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <Sliders className="w-5 h-5 text-amber-500" />
+              Manual Rate Profiles &amp; Bulk Table Importer
             </h3>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-slate-500 mt-1">
               Save customized bank spreads, negotiated contract rates, or personal travel exchange rates.
             </p>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-slate-400">Profile:</span>
+            <span className="text-xs font-semibold text-slate-600">Profile:</span>
             <select
               value={activeProfileId}
               onChange={(e) => setActiveProfileId(e.target.value)}
-              className="bg-slate-900 border border-slate-700 text-xs font-bold text-white px-3 py-1.5 rounded-lg outline-none cursor-pointer"
+              className="bg-slate-50 border border-slate-200 text-xs font-bold text-slate-800 px-3 py-1.5 rounded-lg outline-none cursor-pointer"
             >
               {profiles.map((p) => (
                 <option key={p.id} value={p.id}>
@@ -220,8 +220,8 @@ export const ConverterPage: React.FC = () => {
         </div>
 
         {importStatus && (
-          <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs flex items-center gap-2 animate-in fade-in">
-            <Check className="w-4 h-4 flex-shrink-0" />
+          <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2 animate-in fade-in">
+            <Check className="w-4 h-4 flex-shrink-0 text-emerald-600" />
             <span>{importStatus}</span>
           </div>
         )}
@@ -230,13 +230,13 @@ export const ConverterPage: React.FC = () => {
           {/* Left: Add Pair & Bulk Paste */}
           <div className="space-y-6">
             {/* Single pair adder */}
-            <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800/80">
-              <span className="text-xs font-bold text-slate-300 block mb-2">1. Add Individual Pair</span>
+            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <span className="text-xs font-bold text-slate-800 block mb-2">1. Add Individual Pair</span>
               <div className="grid grid-cols-7 gap-2 items-center">
                 <select
                   value={singleFrom}
                   onChange={(e) => setSingleFrom(e.target.value)}
-                  className="col-span-2 bg-slate-800 text-xs font-semibold text-white p-2 rounded-lg border border-slate-700 outline-none"
+                  className="col-span-2 bg-white text-xs font-semibold text-slate-900 p-2 rounded-lg border border-slate-200 outline-none"
                 >
                   {Object.keys(CURRENCIES).map((c) => (
                     <option key={c} value={c}>{c}</option>
@@ -248,7 +248,7 @@ export const ConverterPage: React.FC = () => {
                 <select
                   value={singleTo}
                   onChange={(e) => setSingleTo(e.target.value)}
-                  className="col-span-2 bg-slate-800 text-xs font-semibold text-white p-2 rounded-lg border border-slate-700 outline-none"
+                  className="col-span-2 bg-white text-xs font-semibold text-slate-900 p-2 rounded-lg border border-slate-200 outline-none"
                 >
                   {Object.keys(CURRENCIES).map((c) => (
                     <option key={c} value={c}>{c}</option>
@@ -261,13 +261,13 @@ export const ConverterPage: React.FC = () => {
                   placeholder="Rate"
                   value={singleRate}
                   onChange={(e) => setSingleRate(e.target.value)}
-                  className="col-span-2 bg-slate-800 text-xs font-bold text-amber-300 p-2 rounded-lg border border-slate-700 outline-none"
+                  className="col-span-2 bg-white text-xs font-bold text-amber-700 p-2 rounded-lg border border-slate-200 outline-none"
                 />
               </div>
 
               <button
                 onClick={handleAddSinglePair}
-                className="mt-3 w-full py-1.5 rounded-lg text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition-colors flex items-center justify-center gap-1.5"
+                className="mt-3 w-full py-2 rounded-lg text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white transition-colors flex items-center justify-center gap-1.5 shadow-sm"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Save Pair to {activeProfile.name}</span>
@@ -275,8 +275,8 @@ export const ConverterPage: React.FC = () => {
             </div>
 
             {/* Bulk paste */}
-            <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800/80">
-              <span className="text-xs font-bold text-slate-300 block mb-1">
+            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <span className="text-xs font-bold text-slate-800 block mb-1">
                 2. Paste Rate Tables / CSV
               </span>
               <span className="text-[11px] text-slate-500 block mb-2">
@@ -287,51 +287,51 @@ export const ConverterPage: React.FC = () => {
                 value={bulkInput}
                 onChange={(e) => setBulkInput(e.target.value)}
                 placeholder={`1 EUR = 94.70 INR\nUSD = 87.12 INR\nGBP = 110.50 INR`}
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-amber-200 font-mono outline-none focus:border-amber-500/50 h-24"
+                className="w-full bg-white border border-slate-200 rounded-lg p-2.5 text-xs text-slate-900 font-mono outline-none focus:border-blue-500 h-24"
               />
 
               <button
                 onClick={handleImportBulk}
-                className="mt-2.5 px-4 py-2 rounded-lg text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 transition-colors flex items-center gap-1.5"
+                className="mt-2.5 px-4 py-2 rounded-lg text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-sm transition-colors flex items-center gap-1.5"
               >
-                <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Parse & Import Rates</span>
+                <FileSpreadsheet className="w-3.5 h-3.5 text-blue-200" />
+                <span>Parse &amp; Import Rates</span>
               </button>
             </div>
           </div>
 
           {/* Right: Saved Rates in Active Profile */}
-          <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800/80 flex flex-col justify-between">
+          <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-bold text-slate-300">
+                <span className="text-xs font-bold text-slate-800">
                   Custom Rates in &quot;{activeProfile.name}&quot;
                 </span>
-                <span className="text-[11px] text-amber-400 font-semibold">
+                <span className="text-[11px] text-amber-700 font-semibold">
                   {Object.keys(activeProfile.rates || {}).length} pairs configured
                 </span>
               </div>
 
-              <div className="max-h-60 overflow-y-auto border border-slate-800 rounded-lg">
+              <div className="max-h-60 overflow-y-auto border border-slate-200 rounded-lg bg-white">
                 <table className="w-full text-left text-xs font-mono">
-                  <thead className="bg-slate-950 text-slate-500 border-b border-slate-800">
+                  <thead className="bg-slate-50 text-slate-500 border-b border-slate-200">
                     <tr>
                       <th className="p-2 font-semibold">Pair</th>
                       <th className="p-2 font-semibold">Custom Rate</th>
                       <th className="p-2 font-semibold text-right">Action</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800/60">
+                  <tbody className="divide-y divide-slate-100">
                     {Object.entries(activeProfile.rates || {}).map(([key, val]) => {
                       const [from, to] = key.split('_');
                       return (
-                        <tr key={key} className="hover:bg-slate-800/30">
-                          <td className="p-2 text-white font-bold">1 {from}</td>
-                          <td className="p-2 text-amber-300 font-bold">{val} {to}</td>
+                        <tr key={key} className="hover:bg-slate-50">
+                          <td className="p-2 text-slate-900 font-bold">1 {from}</td>
+                          <td className="p-2 text-amber-700 font-bold">{val} {to}</td>
                           <td className="p-2 text-right">
                             <button
                               onClick={() => handleDeleteRate(key)}
-                              className="text-red-400 hover:text-red-300 font-sans"
+                              className="text-red-500 hover:text-red-700 font-sans"
                             >
                               Delete
                             </button>
@@ -354,8 +354,8 @@ export const ConverterPage: React.FC = () => {
       {/* Popular Currency Pairs */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-base font-bold text-white flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-sky-400" />
+          <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-blue-600" />
             Popular Spot Forex Pairs
           </h3>
           <span className="text-xs text-slate-500">Live Spot Cross Rates</span>
@@ -365,11 +365,11 @@ export const ConverterPage: React.FC = () => {
           {popularPairs.map((pair) => (
             <div
               key={pair.label}
-              className="glass-panel p-3.5 rounded-xl border border-slate-800 hover:border-sky-500/30 transition-colors"
+              className="bg-white p-3.5 rounded-xl border border-slate-200 hover:border-blue-400 shadow-sm transition-colors"
             >
-              <div className="text-xs font-semibold text-slate-400 mb-1">{pair.label}</div>
-              <div className="text-lg font-bold text-white font-mono">{pair.rate}</div>
-              <div className="text-[10px] text-emerald-400 mt-1 flex items-center gap-0.5">
+              <div className="text-xs font-semibold text-slate-500 mb-1">{pair.label}</div>
+              <div className="text-lg font-bold text-slate-900 font-mono">{pair.rate}</div>
+              <div className="text-[10px] text-emerald-600 mt-1 flex items-center gap-0.5 font-medium">
                 <ArrowUpRight className="w-3 h-3" /> Live rate
               </div>
             </div>
@@ -378,16 +378,16 @@ export const ConverterPage: React.FC = () => {
       </div>
 
       {/* Conversion History */}
-      <div className="glass-panel rounded-2xl p-6 border border-slate-800">
+      <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
-            <History className="w-4 h-4 text-sky-400" />
-            <h3 className="text-base font-bold text-white">Recent Conversions</h3>
+            <History className="w-4 h-4 text-blue-600" />
+            <h3 className="text-base font-bold text-slate-900">Recent Conversions</h3>
           </div>
           {history.length > 0 && (
             <button
               onClick={() => setHistory([])}
-              className="text-xs text-slate-400 hover:text-red-400 flex items-center gap-1 transition-colors"
+              className="text-xs text-slate-500 hover:text-red-600 flex items-center gap-1 transition-colors"
             >
               <Trash2 className="w-3.5 h-3.5" /> Clear History
             </button>
@@ -395,42 +395,42 @@ export const ConverterPage: React.FC = () => {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-slate-300">
-            <thead className="text-[11px] uppercase tracking-wider text-slate-500 border-b border-slate-800">
+          <table className="w-full text-left text-sm text-slate-700">
+            <thead className="text-[11px] uppercase tracking-wider text-slate-500 border-b border-slate-200 bg-slate-50">
               <tr>
-                <th className="pb-3 font-semibold">Mode</th>
-                <th className="pb-3 font-semibold">Original Amount</th>
-                <th className="pb-3 font-semibold">Converted Result</th>
-                <th className="pb-3 font-semibold">Rate Applied</th>
-                <th className="pb-3 font-semibold text-right">Timestamp</th>
+                <th className="p-3 font-semibold">Mode</th>
+                <th className="p-3 font-semibold">Original Amount</th>
+                <th className="p-3 font-semibold">Converted Result</th>
+                <th className="p-3 font-semibold">Rate Applied</th>
+                <th className="p-3 font-semibold text-right">Timestamp</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 font-mono text-xs">
+            <tbody className="divide-y divide-slate-100 font-mono text-xs">
               {history.map((item) => (
-                <tr key={item.id} className="hover:bg-slate-900/40 transition-colors">
-                  <td className="py-3 font-sans">
+                <tr key={item.id} className="hover:bg-slate-50 transition-colors">
+                  <td className="p-3 font-sans">
                     {item.mode === 'manual' ? (
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200">
                         Custom Rate
                       </span>
                     ) : (
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-sky-500/20 text-sky-300 border border-sky-500/30">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
                         Automatic
                       </span>
                     )}
                   </td>
-                  <td className="py-3 text-white font-semibold">
+                  <td className="p-3 text-slate-900 font-semibold">
                     {CURRENCIES[item.from]?.symbol}
                     {item.originalAmount.toLocaleString()} {item.from}
                   </td>
-                  <td className="py-3 text-sky-400 font-bold">
+                  <td className="p-3 text-emerald-700 font-bold">
                     {CURRENCIES[item.to]?.symbol}
                     {item.convertedAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {item.to}
                   </td>
-                  <td className="py-3 text-slate-400">
+                  <td className="p-3 text-slate-500">
                     1 {item.from} = {item.rate.toFixed(4)} {item.to}
                   </td>
-                  <td className="py-3 text-right text-slate-500 font-sans">
+                  <td className="p-3 text-right text-slate-500 font-sans">
                     {item.time}
                   </td>
                 </tr>
