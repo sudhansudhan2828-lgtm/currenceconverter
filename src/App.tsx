@@ -1,5 +1,5 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext.js';
 import { Navbar } from './components/Navbar.js';
 import { Footer } from './components/Footer.js';
@@ -14,10 +14,33 @@ import { CheckoutSimulationPage } from './pages/CheckoutSimulationPage.js';
 import { ExtensionDownloadPage } from './pages/ExtensionDownloadPage.js';
 import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage.js';
 
+// Automatically routes email password reset tokens/hashes from anywhere to /auth?mode=update-password
+const AuthRecoveryWatcher: React.FC = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const hash = window.location.hash || '';
+    const search = window.location.search || '';
+    const isRecovery =
+      hash.includes('type=recovery') ||
+      (hash.includes('access_token') && hash.includes('recovery')) ||
+      search.includes('type=recovery') ||
+      (search.includes('mode=update-password') && location.pathname !== '/auth');
+
+    if (isRecovery && location.pathname !== '/auth') {
+      navigate(`/auth?mode=update-password${hash}`);
+    }
+  }, [location, navigate]);
+
+  return null;
+};
+
 export const App: React.FC = () => {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <AuthRecoveryWatcher />
         <div className="min-h-screen flex flex-col bg-white text-slate-900 font-sans selection:bg-blue-100 selection:text-blue-900">
           <Navbar />
           <main className="flex-1">

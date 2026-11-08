@@ -23,6 +23,7 @@ interface AuthContextType {
   usage: UserUsage;
   preferences: UserPreferences;
   isLoading: boolean;
+  isRecoverySession: boolean;
   login: (email: string, pass: string) => Promise<AuthResult>;
   signup: (email: string, pass: string, name: string) => Promise<AuthResult>;
   loginWithGoogle: () => Promise<AuthResult>;
@@ -75,6 +76,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const [preferences, setPreferences] = useState<UserPreferences>(APP_CONFIG.defaultPreferences);
   const [isLoading, setIsLoading] = useState(false);
+  const [isRecoverySession, setIsRecoverySession] = useState(false);
 
   // Sync Supabase Auth session on mount
   useEffect(() => {
@@ -101,6 +103,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // Listen for auth state changes (login, logout, token refresh, password recovery)
     const { data: { subscription: authListener } } = supabase.auth.onAuthStateChange(
       async (event: any, session: any) => {
+        if (event === 'PASSWORD_RECOVERY') {
+          setIsRecoverySession(true);
+        }
+
         if (session?.user) {
           const profile: UserProfile = {
             id: session.user.id,
@@ -113,6 +119,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         } else if (event === 'SIGNED_OUT') {
           setUser(null);
           localStorage.removeItem('hc_user');
+          setIsRecoverySession(false);
         }
       }
     );
@@ -427,6 +434,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         usage,
         preferences,
         isLoading,
+        isRecoverySession,
         login,
         signup,
         loginWithGoogle,

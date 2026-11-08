@@ -7,9 +7,25 @@ type AuthMode = 'signin' | 'signup' | 'verify-otp' | 'forgot-password' | 'update
 
 export const AuthPage: React.FC = () => {
   const [searchParams] = useSearchParams();
-  const initialMode = searchParams.get('mode') === 'update-password' ? 'update-password' : 'signin';
   const redirectTarget = searchParams.get('redirect') || '/dashboard';
   const reason = searchParams.get('reason');
+
+  // Immediately check if the current URL or hash indicates a password recovery session
+  const checkIsRecovery = () => {
+    const hash = typeof window !== 'undefined' ? window.location.hash : '';
+    const search = typeof window !== 'undefined' ? window.location.search : '';
+    return (
+      hash.includes('type=recovery') ||
+      (hash.includes('access_token') && hash.includes('recovery')) ||
+      search.includes('type=recovery') ||
+      search.includes('mode=update-password') ||
+      (search.includes('code=') && (search.includes('recovery') || hash.includes('recovery')))
+    );
+  };
+
+  const initialMode: AuthMode = checkIsRecovery() || searchParams.get('mode') === 'update-password' 
+    ? 'update-password' 
+    : 'signin';
   
   const [mode, setMode] = useState<AuthMode>(initialMode);
   const [email, setEmail] = useState<string>('');
@@ -19,9 +35,17 @@ export const AuthPage: React.FC = () => {
   const [otpCode, setOtpCode] = useState<string>('');
   
   const [submitting, setSubmitting] = useState<boolean>(false);
-  const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(() => {
+    if (checkIsRecovery()) {
+      return {
+        type: 'success',
+        message: '🔑 Password reset link verified! Please enter your new password below.'
+      };
+    }
+    return null;
+  });
   
-  const { user, login, signup, loginWithGoogle, loginWithGoogleIdToken, verifyOtp, forgotPassword, updatePassword, isLoading } = useAuth();
+  const { user, login, signup, loginWithGoogle, loginWithGoogleIdToken, verifyOtp, forgotPassword, updatePassword, isLoading, isRecoverySession } = useAuth();
   const navigate = useNavigate();
 
   const googleBtnRef = useRef<HTMLDivElement>(null);
@@ -29,11 +53,12 @@ export const AuthPage: React.FC = () => {
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || '376433609251-8ktojvsjjo10rh0j2sdv539ln5ud59c2.apps.googleusercontent.com';
 
   // If already authenticated via Google OAuth or active session, redirect to destination
+  // BUT NEVER redirect away if in password reset / recovery flow!
   useEffect(() => {
-    if (user && mode !== 'update-password') {
+    if (user && mode !== 'update-password' && !checkIsRecovery() && !isRecoverySession) {
       navigate(redirectTarget);
     }
-  }, [user, mode, navigate, redirectTarget]);
+  }, [user, mode, navigate, redirectTarget, isRecoverySession]);
 
   // Notice when redirected for upgrade
   useEffect(() => {
@@ -45,17 +70,16 @@ export const AuthPage: React.FC = () => {
     }
   }, [reason]);
 
+  // Watch for Supabase PASSWORD_RECOVERY events or recovery tokens in URL
   useEffect(() => {
-    const isRecoveryHash = window.location.hash.includes('type=recovery') || window.location.hash.includes('access_token');
-    const isRecoveryMode = searchParams.get('mode') === 'update-password' || searchParams.get('type') === 'recovery';
-    if (isRecoveryHash || isRecoveryMode) {
+    if (checkIsRecovery() || isRecoverySession) {
       setMode('update-password');
       setNotification({
         type: 'success',
         message: '🔑 Password reset link verified! Please enter your new password below.'
       });
     }
-  }, [searchParams]);
+  }, [searchParams, isRecoverySession]);
 
   // Initialize and render Google Identity Services on currenceconverter.me
   useEffect(() => {
