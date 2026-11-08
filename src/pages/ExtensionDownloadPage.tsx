@@ -18,6 +18,16 @@ export const ExtensionDownloadPage: React.FC = () => {
           <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
             Experience instant hover conversions on Google Chrome, Microsoft Edge, Brave, and all Chromium browsers.
           </p>
+          <div className="pt-2">
+            <a
+              href="/HoverCurrency-Extension-v1.0.0.zip"
+              download="HoverCurrency-Extension-v1.0.0.zip"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20 active:scale-[0.99] transition-all"
+            >
+              <Download className="w-4 h-4" />
+              <span>Download Extension (.ZIP)</span>
+            </a>
+          </div>
         </div>
 
         {/* Guide Steps */}
@@ -33,9 +43,9 @@ export const ExtensionDownloadPage: React.FC = () => {
                 1
               </div>
               <div>
-                <h3 className="text-sm font-bold text-slate-900">Open the Extensions Manager</h3>
+                <h3 className="text-sm font-bold text-slate-900">Download &amp; Unzip</h3>
                 <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                  In Chrome, navigate to <code className="bg-slate-100 px-2 py-0.5 rounded text-blue-700 font-mono text-xs border border-slate-200">chrome://extensions</code> (or <code className="bg-slate-100 px-2 py-0.5 rounded text-blue-700 font-mono text-xs border border-slate-200">edge://extensions</code> in Microsoft Edge).
+                  Click the <strong>Download Extension</strong> button above, then extract the downloaded ZIP file to a folder on your computer.
                 </p>
               </div>
             </div>
@@ -45,9 +55,9 @@ export const ExtensionDownloadPage: React.FC = () => {
                 2
               </div>
               <div>
-                <h3 className="text-sm font-bold text-slate-900">Toggle "Developer Mode"</h3>
+                <h3 className="text-sm font-bold text-slate-900">Open Extensions Manager &amp; Toggle Developer Mode</h3>
                 <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                  Turn on the <strong>Developer mode</strong> switch located at the top-right corner of the Extensions page.
+                  In Chrome, go to <code className="bg-slate-100 px-2 py-0.5 rounded text-blue-700 font-mono text-xs border border-slate-200">chrome://extensions</code> (or <code className="bg-slate-100 px-2 py-0.5 rounded text-blue-700 font-mono text-xs border border-slate-200">edge://extensions</code>). Then switch on <strong>Developer mode</strong> in the top-right corner.
                 </p>
               </div>
             </div>
@@ -59,11 +69,8 @@ export const ExtensionDownloadPage: React.FC = () => {
               <div>
                 <h3 className="text-sm font-bold text-slate-900">Click "Load unpacked"</h3>
                 <p className="text-xs sm:text-sm text-slate-500 mt-1 mb-2">
-                  Click the <strong>Load unpacked</strong> button and select your local extension folder:
+                  Click the <strong>Load unpacked</strong> button at the top-left and select the extracted extension folder. HoverCurrency is instantly installed!
                 </p>
-                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono text-slate-700 flex items-center justify-between">
-                  <span>C:\Users\Sudhan M\Downloads\Extensions\currency-converter-extension</span>
-                </div>
               </div>
             </div>
           </div>

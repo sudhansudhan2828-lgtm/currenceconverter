@@ -39,6 +39,7 @@ export const Footer: React.FC = () => {
             <li><Link to="/how-it-works#features" className="hover:text-blue-600 transition-colors">Features</Link></li>
             <li><a href="https://dodopayments.com" target="_blank" rel="noreferrer" className="hover:text-blue-600 transition-colors inline-flex items-center gap-1">Dodo Payments <ExternalLink className="w-3 h-3" /></a></li>
             <li><Link to="/privacy" className="hover:text-blue-600 transition-colors">Privacy Policy</Link></li>
+            <li><Link to="/terms" className="hover:text-blue-600 transition-colors">Terms of Service</Link></li>
           </ul>
         </div>
       </div>

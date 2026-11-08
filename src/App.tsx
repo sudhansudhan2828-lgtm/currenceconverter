@@ -13,6 +13,7 @@ import { AuthPage } from './pages/AuthPage.js';
 import { CheckoutSimulationPage } from './pages/CheckoutSimulationPage.js';
 import { ExtensionDownloadPage } from './pages/ExtensionDownloadPage.js';
 import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage.js';
+import { TermsPage } from './pages/TermsPage.js';
 
 // Automatically routes email password reset tokens/hashes from anywhere to /auth?mode=update-password
 const AuthRecoveryWatcher: React.FC = () => {
@@ -56,6 +57,7 @@ export const App: React.FC = () => {
               <Route path="/checkout-simulation" element={<CheckoutSimulationPage />} />
               <Route path="/extension" element={<ExtensionDownloadPage />} />
               <Route path="/privacy" element={<PrivacyPolicyPage />} />
+              <Route path="/terms" element={<TermsPage />} />
             </Routes>
           </main>
           <Footer />
