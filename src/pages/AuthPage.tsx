@@ -48,14 +48,14 @@ export const AuthPage: React.FC = () => {
           setMode('verify-otp');
           setNotification({ 
             type: 'success', 
-            message: `🎉 Verification code sent to ${email}! Enter the 6-digit OTP from your email below.` 
+            message: `🎉 Verification code sent to ${email}! Enter the 8-digit OTP from your email below.` 
           });
         } else {
           navigate('/dashboard');
         }
       } else if (mode === 'verify-otp') {
         if (!otpCode || otpCode.length < 6) {
-          setNotification({ type: 'error', message: 'Please enter the complete 6-digit verification code.' });
+          setNotification({ type: 'error', message: 'Please enter your complete verification code.' });
           return;
         }
         const res = await verifyOtp(email, otpCode, 'signup');
@@ -137,7 +137,7 @@ export const AuthPage: React.FC = () => {
           <p className="text-xs sm:text-sm text-slate-500 mt-1.5 leading-relaxed">
             {mode === 'signup' && 'Start converting currencies instantly across the web'}
             {mode === 'signin' && 'Sign in to access your dashboard and extension sync'}
-            {mode === 'verify-otp' && `Enter the 6-digit OTP code sent to ${email}`}
+            {mode === 'verify-otp' && `Enter the 8-digit OTP code sent to ${email}`}
             {mode === 'forgot-password' && 'Enter your email to receive a password reset link'}
             {mode === 'update-password' && 'Choose a strong new password for your account'}
           </p>
@@ -224,19 +224,19 @@ export const AuthPage: React.FC = () => {
             <div className="space-y-4">
               <div>
                 <label className="text-xs font-semibold text-slate-700 block mb-2 text-center">
-                  6-Digit Verification Code
+                  8-Digit Verification Code
                 </label>
                 <div className="relative">
                   <KeyRound className="w-5 h-5 text-blue-500 absolute left-3.5 top-3.5" />
                   <input
                     type="text"
                     required
-                    maxLength={6}
+                    maxLength={8}
                     autoFocus
                     value={otpCode}
                     onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
-                    placeholder="123456"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-11 pr-4 py-3 text-center text-2xl font-bold tracking-[0.35em] text-slate-900 placeholder-slate-300 outline-none focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all font-mono"
+                    placeholder="12345678"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-11 pr-4 py-3 text-center text-2xl font-bold tracking-[0.25em] text-slate-900 placeholder-slate-300 outline-none focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all font-mono"
                   />
                 </div>
               </div>
@@ -266,7 +266,7 @@ export const AuthPage: React.FC = () => {
                       await signup(email, password, name);
                       setNotification({
                         type: 'success',
-                        message: '📩 A new 6-digit OTP code has been sent to your email.'
+                        message: '📩 A new 8-digit OTP code has been sent to your email.'
                       });
                     } finally {
                       setSubmitting(false);

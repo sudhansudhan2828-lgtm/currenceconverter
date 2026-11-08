@@ -38,6 +38,14 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const formatAuthError = (err: any, fallback: string): string => {
+  const msg = typeof err === 'string' ? err : (err?.message || '');
+  if (msg.includes('Failed to fetch') || msg.includes('network') || msg.includes('offline') || (typeof navigator !== 'undefined' && !navigator.onLine)) {
+    return 'Network disconnected: Unable to connect to Supabase. Please check your internet connection and try again.';
+  }
+  return msg || fallback;
+};
+
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<UserProfile | null>(() => {
     const saved = localStorage.getItem('hc_user');
@@ -185,7 +193,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       return { success: false, error: 'Login failed. Please check credentials.' };
     } catch (err: any) {
-      return { success: false, error: err.message || 'An unexpected error occurred.' };
+      return { success: false, error: formatAuthError(err, 'An unexpected error occurred.') };
     } finally {
       setIsLoading(false);
     }
@@ -230,7 +238,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       return { success: false, error: 'Registration could not be completed.' };
     } catch (err: any) {
-      return { success: false, error: err.message || 'Registration failed.' };
+      return { success: false, error: formatAuthError(err, 'Registration failed.') };
     } finally {
       setIsLoading(false);
     }
@@ -253,7 +261,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       return { success: true };
     } catch (err: any) {
-      return { success: false, error: err.message || 'Google sign in failed.' };
+      return { success: false, error: formatAuthError(err, 'Google sign in failed.') };
     } finally {
       setIsLoading(false);
     }
@@ -276,7 +284,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         message: 'Password reset email sent! Check your inbox (and spam folder) for the reset link.'
       };
     } catch (err: any) {
-      return { success: false, error: err.message || 'Failed to send password reset email.' };
+      return { success: false, error: formatAuthError(err, 'Failed to send password reset email.') };
     } finally {
       setIsLoading(false);
     }
@@ -314,7 +322,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       return { success: true };
     } catch (err: any) {
-      return { success: false, error: err.message || 'OTP verification failed.' };
+      return { success: false, error: formatAuthError(err, 'OTP verification failed.') };
     } finally {
       setIsLoading(false);
     }
@@ -334,7 +342,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       return { success: true, message: 'Password updated successfully!' };
     } catch (err: any) {
-      return { success: false, error: err.message || 'Failed to update password.' };
+      return { success: false, error: formatAuthError(err, 'Failed to update password.') };
     } finally {
       setIsLoading(false);
     }
