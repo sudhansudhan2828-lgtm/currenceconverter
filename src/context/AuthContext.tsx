@@ -25,6 +25,7 @@ interface AuthContextType {
   isLoading: boolean;
   login: (email: string, pass: string) => Promise<AuthResult>;
   signup: (email: string, pass: string, name: string) => Promise<AuthResult>;
+  loginWithGoogle: () => Promise<AuthResult>;
   forgotPassword: (email: string) => Promise<AuthResult>;
   updatePassword: (newPassword: string) => Promise<AuthResult>;
   loginAsDemo: () => void;
@@ -234,6 +235,29 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  // Google OAuth Login
+  const loginWithGoogle = async (): Promise<AuthResult> => {
+    setIsLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth`
+        }
+      });
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      return { success: true };
+    } catch (err: any) {
+      return { success: false, error: err.message || 'Google sign in failed.' };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Real Supabase Forgot Password (Triggers Reset Email)
   const forgotPassword = async (email: string): Promise<AuthResult> => {
     setIsLoading(true);
@@ -309,6 +333,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         isLoading,
         login,
         signup,
+        loginWithGoogle,
         forgotPassword,
         updatePassword,
         loginAsDemo,
