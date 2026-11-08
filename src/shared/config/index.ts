@@ -103,7 +103,7 @@ export const DEFAULT_DUAL_RATE_CONFIG: DualRateEngineConfig = {
 export const APP_CONFIG = {
   appName: 'HoverCurrency',
   appTagline: 'Instant Hover-to-Convert Currency Ecosystem',
-  websiteUrl: 'https://currenceconverter-eta.vercel.app',
+  websiteUrl: 'https://currenceconverter.me',
   apiUrl: 'http://localhost:3000/api',
   plans: {
     free: {
