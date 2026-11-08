@@ -89,7 +89,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     // Listen for auth state changes (login, logout, token refresh, password recovery)
     const { data: { subscription: authListener } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      async (event: any, session: any) => {
         if (session?.user) {
           const profile: UserProfile = {
             id: session.user.id,
