@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { CheckCircle2, Sparkles, ShieldCheck, Zap, Lock, CreditCard, RefreshCw, ExternalLink } from 'lucide-react';
+import { Check, ShieldCheck, RefreshCw, Zap, Crown, Leaf } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.js';
-import { createDodoCheckout, simulateProUpgrade } from '../services/api.js';
+import { createDodoCheckout } from '../services/api.js';
 import { useNavigate } from 'react-router-dom';
 
 export const PricingPage: React.FC = () => {
-  const { user, subscription, refreshStatus, resetToFree } = useAuth();
+  const { user, subscription, resetToFree } = useAuth();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errMessage, setErrMessage] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -31,213 +31,194 @@ export const PricingPage: React.FC = () => {
     }
   };
 
-  const handleInstantTestUpgrade = async () => {
-    setIsLoading(true);
-    try {
-      const targetUserId = user?.id || 'usr_demo_8829';
-      await simulateProUpgrade(targetUserId);
-      await refreshStatus();
-      navigate('/dashboard?tab=subscription&activated=true');
-    } catch (e: any) {
-      setErrMessage(e.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
-      {/* Title */}
-      <div className="text-center max-w-3xl mx-auto">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-sky-500/10 text-sky-400 border border-sky-500/20 mb-3">
-          <Sparkles className="w-3.5 h-3.5" /> Simple, Transparent Subscription
-        </div>
-        <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
-          Choose Your Conversion Plan
-        </h1>
-        <p className="text-slate-400 text-sm sm:text-base mt-3">
-          Enjoy 29 free conversions every month or unlock unlimited hover-to-convert power across the entire web.
-        </p>
-      </div>
-
-      {errMessage && (
-        <div className="max-w-xl mx-auto p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm text-center">
-          {errMessage}
-        </div>
-      )}
-
-      {/* Pricing Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto items-stretch">
-        {/* FREE PLAN */}
-        <div className="glass-panel rounded-3xl p-8 border border-slate-800 flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-sm font-bold uppercase tracking-wider text-slate-400">Free Tier</span>
-              <span className="text-xs px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 font-semibold">
-                $0 / month
-              </span>
-            </div>
-
-            <div className="flex items-baseline gap-1 mb-2">
-              <span className="text-5xl font-extrabold text-white">$0</span>
-              <span className="text-slate-400 text-sm font-medium">/forever</span>
-            </div>
-            <p className="text-slate-400 text-sm mb-6">
-              Generous starter plan for everyday shoppers checking international item prices.
-            </p>
-
-            <div className="h-px bg-slate-800 mb-6" />
-
-            <ul className="space-y-3.5 text-sm text-slate-300 mb-8">
-              <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                <span><strong>29 successful conversions</strong> per month</span>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                <span>Hover-to-convert engine on all websites</span>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                <span>Currency selection (160+ currencies)</span>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                <span>Basic web currency converter</span>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                <span>Real-time exchange rate information</span>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                <span>Monthly usage counter & reset</span>
-              </li>
-            </ul>
+    <div className="bg-white min-h-[85vh] py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-5xl mx-auto space-y-12">
+        {/* Header */}
+        <div className="text-center space-y-3">
+          <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+            Pricing
           </div>
-
-          <button
-            disabled={!isPro}
-            onClick={resetToFree}
-            className={`w-full py-3.5 rounded-xl font-bold text-sm text-center transition-colors ${
-              !isPro
-                ? 'bg-slate-800/80 text-slate-400 cursor-default border border-slate-700/60'
-                : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 cursor-pointer'
-            }`}
-          >
-            {!isPro ? 'Current Plan (Active)' : 'Revert to Free Tier'}
-          </button>
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+            Simple & Transparent Pricing
+          </h1>
+          <p className="text-sm sm:text-base text-slate-600 max-w-xl mx-auto">
+            Choose the plan that fits your usage. Start for free, upgrade when you need unlimited conversions.
+          </p>
         </div>
 
-        {/* PRO PLAN */}
-        <div className="glass-panel rounded-3xl p-8 border-2 border-sky-500/50 bg-gradient-to-b from-slate-900 via-slate-900 to-sky-950/40 flex flex-col justify-between relative shadow-2xl glow-primary">
-          <div className="absolute -top-3.5 right-8 px-3.5 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 uppercase tracking-wider shadow-md">
-            Best Value
+        {errMessage && (
+          <div className="max-w-md mx-auto p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm text-center">
+            {errMessage}
           </div>
+        )}
 
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-sm font-bold uppercase tracking-wider text-sky-400 flex items-center gap-1.5">
-                <Sparkles className="w-4 h-4" /> Pro Plan
-              </span>
-              <span className="text-xs px-2.5 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/30 font-semibold">
-                Dodo Payments
-              </span>
+        {/* 2-Card Layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto items-stretch">
+          
+          {/* FREE PLAN */}
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <Leaf className="w-5 h-5 text-emerald-600" />
+                <span className="font-bold text-lg text-slate-900">Free</span>
+              </div>
+              <p className="text-xs text-slate-500 mb-6">For casual users</p>
+
+              <div className="flex items-baseline gap-1 mb-6">
+                <span className="text-4xl font-extrabold text-slate-900">$0</span>
+                <span className="text-sm font-medium text-slate-500">/ month</span>
+              </div>
+
+              <div className="border-t border-slate-100 pt-6 mb-6">
+                <ul className="space-y-3.5 text-sm text-slate-700">
+                  <li className="flex items-center gap-2.5">
+                    <Check className="w-4 h-4 text-emerald-600 stroke-[3] shrink-0" />
+                    <span>29 conversions per month</span>
+                  </li>
+                  <li className="flex items-center gap-2.5">
+                    <Check className="w-4 h-4 text-emerald-600 stroke-[3] shrink-0" />
+                    <span>Use your own live rate (from Google)</span>
+                  </li>
+                  <li className="flex items-center gap-2.5">
+                    <Check className="w-4 h-4 text-emerald-600 stroke-[3] shrink-0" />
+                    <span>Rate valid for 24 hours</span>
+                  </li>
+                  <li className="flex items-center gap-2.5">
+                    <Check className="w-4 h-4 text-emerald-600 stroke-[3] shrink-0" />
+                    <span>Basic conversion history</span>
+                  </li>
+                </ul>
+              </div>
             </div>
 
-            <div className="flex items-baseline gap-1 mb-2">
-              <span className="text-5xl font-extrabold text-white">$9</span>
-              <span className="text-slate-400 text-sm font-medium">/ 3 months (recurring quarterly)</span>
-            </div>
-            <p className="text-slate-300 text-sm mb-6">
-              Complete freedom with unlimited hover conversions and premium custom rate profiles.
-            </p>
-
-            <div className="h-px bg-slate-800 mb-6" />
-
-            <ul className="space-y-3.5 text-sm text-slate-200 mb-8">
-              <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-sky-400 flex-shrink-0" />
-                <span><strong>Unlimited currency conversions</strong></span>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-sky-400 flex-shrink-0" />
-                <span><strong>Unlimited hover-to-convert usage</strong></span>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-sky-400 flex-shrink-0" />
-                <span><strong>Premium Rate Profiles</strong> (Bank, Business, Travel, Custom)</span>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-sky-400 flex-shrink-0" />
-                <span>Daily update reminder alarms via Chrome Alarms</span>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-sky-400 flex-shrink-0" />
-                <span>Cross-device browser synchronization</span>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-sky-400 flex-shrink-0" />
-                <span>Website exclusion list & custom formatting</span>
-              </li>
-            </ul>
-          </div>
-
-          <div className="space-y-3">
-            {isPro ? (
-              <div className="space-y-3">
-                <div className="w-full py-3.5 rounded-xl font-bold text-sm text-center bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center justify-center gap-2">
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>Your Pro Subscription is Active</span>
-                </div>
+            <div>
+              {isPro ? (
                 <button
                   onClick={resetToFree}
-                  className="w-full py-2.5 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors flex items-center justify-center gap-1.5"
+                  className="w-full py-2.5 rounded-xl font-semibold text-sm text-slate-600 bg-slate-100 hover:bg-slate-200 border border-slate-200 transition-colors"
                 >
-                  <RefreshCw className="w-3.5 h-3.5" />
-                  <span>Switch back to Free Plan (Reset)</span>
+                  Downgrade to Free
                 </button>
-              </div>
-            ) : (
-              <button
-                onClick={handleProCheckout}
-                disabled={isLoading}
-                className="w-full py-3.5 rounded-xl font-bold text-sm bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white shadow-lg shadow-sky-500/30 transition-all flex items-center justify-center gap-2"
-              >
-                {isLoading ? (
-                  <RefreshCw className="w-4 h-4 animate-spin" />
-                ) : (
-                  <CreditCard className="w-4 h-4" />
-                )}
-                <span>Upgrade via Dodo Payments ($9 / 3 mos)</span>
-              </button>
-            )}
+              ) : (
+                <button
+                  onClick={() => navigate('/extension')}
+                  className="w-full py-2.5 rounded-xl font-semibold text-sm text-blue-600 border border-blue-600 hover:bg-blue-50 transition-colors"
+                >
+                  Get Started Free
+                </button>
+              )}
+            </div>
+          </div>
 
-            {/* Test helper for immediate developer / review preview */}
-            {!isPro && (
-              <button
-                onClick={handleInstantTestUpgrade}
-                disabled={isLoading}
-                className="w-full text-center text-xs text-sky-400 hover:text-sky-300 underline py-1 transition-colors"
-              >
-                ⚡ Instant Pro Activation (One-Click Dev Preview)
-              </button>
-            )}
+          {/* PRO PLAN */}
+          <div className="bg-white rounded-2xl border-2 border-blue-600 shadow-md flex flex-col justify-between overflow-hidden relative">
+            {/* Top Blue Header */}
+            <div className="bg-blue-600 text-white p-6 sm:p-8 relative">
+              <div className="flex items-center justify-between mb-1">
+                <div className="flex items-center gap-2">
+                  <Crown className="w-5 h-5 text-amber-300" />
+                  <span className="font-bold text-lg text-white">Pro</span>
+                </div>
+                <span className="text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-white text-blue-600 shadow-sm">
+                  Most Popular
+                </span>
+              </div>
+              <p className="text-xs text-blue-100 mb-6">For power users & frequent conversions</p>
+
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-4xl font-extrabold text-white">$9</span>
+                <span className="text-sm font-medium text-blue-100">/ every 3 months</span>
+              </div>
+              <p className="text-xs text-blue-200 mt-1">($3 per month)</p>
+            </div>
+
+            {/* Bottom White Body */}
+            <div className="p-6 sm:p-8 flex flex-col justify-between flex-1">
+              <ul className="space-y-3.5 text-sm text-slate-700 mb-8">
+                <li className="flex items-center gap-2.5">
+                  <Check className="w-4 h-4 text-emerald-600 stroke-[3] shrink-0" />
+                  <span className="font-medium text-slate-900">Unlimited conversions</span>
+                </li>
+                <li className="flex items-center gap-2.5">
+                  <Check className="w-4 h-4 text-emerald-600 stroke-[3] shrink-0" />
+                  <span>Save and manage your rate</span>
+                </li>
+                <li className="flex items-center gap-2.5">
+                  <Check className="w-4 h-4 text-emerald-600 stroke-[3] shrink-0" />
+                  <span>Conversion history (unlimited)</span>
+                </li>
+                <li className="flex items-center gap-2.5">
+                  <Check className="w-4 h-4 text-emerald-600 stroke-[3] shrink-0" />
+                  <span>24-hour auto reminder</span>
+                </li>
+                <li className="flex items-center gap-2.5">
+                  <Check className="w-4 h-4 text-emerald-600 stroke-[3] shrink-0" />
+                  <span>Priority support</span>
+                </li>
+              </ul>
+
+              <div>
+                {isPro ? (
+                  <div className="space-y-2">
+                    <div className="w-full py-3 rounded-xl font-bold text-sm text-center bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center gap-1.5">
+                      <Check className="w-4 h-4 text-emerald-600 stroke-[3]" />
+                      <span>Pro Plan Active</span>
+                    </div>
+                    <button
+                      onClick={resetToFree}
+                      className="w-full text-center text-xs text-slate-500 hover:text-red-600 underline py-1 transition-colors"
+                    >
+                      Reset to Free (Test Mode)
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={handleProCheckout}
+                    disabled={isLoading}
+                    className="w-full py-3 rounded-xl font-semibold text-sm bg-blue-600 hover:bg-blue-700 text-white shadow-sm transition-colors flex items-center justify-center gap-2"
+                  >
+                    {isLoading ? (
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <span>Upgrade to Pro</span>
+                    )}
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Bottom 3 Trust Badges */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto pt-6">
+          <div className="flex items-center justify-center gap-3 p-4 rounded-xl bg-slate-50 border border-slate-200 text-slate-700">
+            <ShieldCheck className="w-5 h-5 text-blue-600 shrink-0" />
+            <div className="text-left">
+              <div className="text-xs font-bold text-slate-900">Secure Payment</div>
+              <div className="text-[11px] text-slate-500">via Dodo Payments</div>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-center gap-3 p-4 rounded-xl bg-slate-50 border border-slate-200 text-slate-700">
+            <RefreshCw className="w-5 h-5 text-blue-600 shrink-0" />
+            <div className="text-left">
+              <div className="text-xs font-bold text-slate-900">Cancel Anytime</div>
+              <div className="text-[11px] text-slate-500">No long-term lock-in</div>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-center gap-3 p-4 rounded-xl bg-slate-50 border border-slate-200 text-slate-700">
+            <Zap className="w-5 h-5 text-blue-600 shrink-0" />
+            <div className="text-left">
+              <div className="text-xs font-bold text-slate-900">Quarterly Billing</div>
+              <div className="text-[11px] text-slate-500">$9 every 3 months</div>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Security & Dodo Payments Assurance */}
-      <div className="max-w-2xl mx-auto glass-panel p-6 rounded-2xl border border-slate-800 text-center space-y-3">
-        <div className="flex items-center justify-center gap-2 text-emerald-400 text-xs font-bold uppercase tracking-wider">
-          <ShieldCheck className="w-4 h-4" />
-          <span>Exclusive Payment Provider: Dodo Payments</span>
-        </div>
-        <p className="text-xs text-slate-400 leading-relaxed">
-          All transactions are processed through Dodo Payments official recurring billing infrastructure. Your payment details are encrypted with bank-level security and never stored on our servers. Cancel anytime with a single click.
-        </p>
       </div>
     </div>
   );
 };
-
