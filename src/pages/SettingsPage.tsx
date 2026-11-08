@@ -11,14 +11,56 @@ import {
   User as UserIcon, 
   ShieldCheck, 
   Edit3, 
-  ChevronRight 
+  ChevronRight,
+  Lock,
+  CheckCircle2,
+  AlertCircle,
+  X
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.js';
 
 export const SettingsPage: React.FC = () => {
-  const { user, subscription, resetToFree } = useAuth();
+  const { user, subscription, resetToFree, updatePassword } = useAuth();
   const [targetCurrency, setTargetCurrency] = useState('INR – Indian Rupee');
   const [reminderEnabled, setReminderEnabled] = useState(true);
+  
+  // Change Password state
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [pwdLoading, setPwdLoading] = useState(false);
+  const [pwdStatus, setPwdStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
+  const handleUpdatePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPwdStatus(null);
+    if (newPassword.length < 6) {
+      setPwdStatus({ type: 'error', message: 'Password must be at least 6 characters.' });
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setPwdStatus({ type: 'error', message: 'Passwords do not match.' });
+      return;
+    }
+
+    setPwdLoading(true);
+    try {
+      const res = await updatePassword(newPassword);
+      if (res.success) {
+        setPwdStatus({ type: 'success', message: 'Password updated successfully!' });
+        setTimeout(() => {
+          setShowPasswordModal(false);
+          setNewPassword('');
+          setConfirmPassword('');
+          setPwdStatus(null);
+        }, 1500);
+      } else {
+        setPwdStatus({ type: 'error', message: res.error || 'Failed to update password.' });
+      }
+    } finally {
+      setPwdLoading(false);
+    }
+  };
 
   const isPro = subscription.plan === 'pro';
 
@@ -190,7 +232,11 @@ export const SettingsPage: React.FC = () => {
                 </div>
 
                 <div className="pt-1">
-                  <button className="text-blue-600 hover:text-blue-700 font-semibold text-xs flex items-center gap-1">
+                  <button 
+                    type="button"
+                    onClick={() => setShowPasswordModal(true)}
+                    className="text-blue-600 hover:text-blue-700 font-semibold text-xs flex items-center gap-1 transition-colors"
+                  >
                     <span>Change Password</span>
                     <ChevronRight className="w-3.5 h-3.5" />
                   </button>
@@ -239,6 +285,90 @@ export const SettingsPage: React.FC = () => {
 
         </main>
       </div>
+
+      {/* Change Password Modal */}
+      {showPasswordModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-sm w-full p-6 space-y-4 animate-fade-in-up">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                  <Lock className="w-4 h-4" />
+                </div>
+                <h3 className="font-bold text-slate-900 text-sm">Change Password</h3>
+              </div>
+              <button 
+                onClick={() => { setShowPasswordModal(false); setPwdStatus(null); }}
+                className="text-slate-400 hover:text-slate-600"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {pwdStatus && (
+              <div className={`p-3 rounded-xl text-xs flex items-center gap-2 ${
+                pwdStatus.type === 'success' 
+                  ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' 
+                  : 'bg-red-50 text-red-700 border border-red-200'
+              }`}>
+                {pwdStatus.type === 'success' ? (
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                ) : (
+                  <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+                )}
+                <span>{pwdStatus.message}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleUpdatePassword} className="space-y-3">
+              <div>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">New Password</label>
+                <input
+                  type="password"
+                  required
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Min 6 characters"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-blue-600 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Confirm New Password</label>
+                <input
+                  type="password"
+                  required
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Re-type new password"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-900 focus:bg-white focus:border-blue-600 focus:outline-none"
+                />
+              </div>
+
+              <div className="pt-2 flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => { setShowPasswordModal(false); setPwdStatus(null); }}
+                  className="flex-1 py-2 rounded-xl text-xs font-semibold border border-slate-200 text-slate-600 hover:bg-slate-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={pwdLoading}
+                  className="flex-1 py-2 rounded-xl text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-sm flex items-center justify-center gap-1.5"
+                >
+                  {pwdLoading ? (
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <span>Save Password</span>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

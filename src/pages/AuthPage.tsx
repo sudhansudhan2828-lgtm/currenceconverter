@@ -1,28 +1,83 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext.js';
-import { useNavigate, Link } from 'react-router-dom';
-import { ArrowLeftRight, Lock, Mail, User, Sparkles, Check, ArrowRight } from 'lucide-react';
-import { BrandedLoader } from '../components/BrandedLoader.js';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { ArrowLeftRight, Lock, Mail, User, Sparkles, CheckCircle2, ArrowRight, KeyRound, AlertCircle, ArrowLeft } from 'lucide-react';
+
+type AuthMode = 'signin' | 'signup' | 'forgot-password' | 'update-password';
 
 export const AuthPage: React.FC = () => {
-  const [isSignUp, setIsSignUp] = useState<boolean>(false);
-  const [email, setEmail] = useState<string>('alex.rivera@example.com');
-  const [password, setPassword] = useState<string>('password123');
-  const [name, setName] = useState<string>('Alex Rivera');
+  const [searchParams] = useSearchParams();
+  const initialMode = searchParams.get('mode') === 'update-password' ? 'update-password' : 'signin';
+  
+  const [mode, setMode] = useState<AuthMode>(initialMode);
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const [name, setName] = useState<string>('');
+  
   const [submitting, setSubmitting] = useState<boolean>(false);
-  const { login, signup, loginAsDemo, isLoading } = useAuth();
+  const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  
+  const { login, signup, forgotPassword, updatePassword, loginAsDemo, isLoading } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (searchParams.get('mode') === 'update-password') {
+      setMode('update-password');
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setNotification(null);
     setSubmitting(true);
+
     try {
-      if (isSignUp) {
-        await signup(email, password, name);
-      } else {
-        await login(email, password);
+      if (mode === 'signup') {
+        const res = await signup(email, password, name);
+        if (!res.success) {
+          setNotification({ type: 'error', message: res.error || 'Sign up failed.' });
+        } else if (res.requiresEmailConfirmation) {
+          setNotification({ 
+            type: 'success', 
+            message: '🎉 Confirmation email sent! Please check your inbox (and Spam folder) to verify your account.' 
+          });
+        } else {
+          navigate('/dashboard');
+        }
+      } else if (mode === 'signin') {
+        const res = await login(email, password);
+        if (!res.success) {
+          setNotification({ type: 'error', message: res.error || 'Invalid email or password.' });
+        } else {
+          navigate('/dashboard');
+        }
+      } else if (mode === 'forgot-password') {
+        const res = await forgotPassword(email);
+        if (!res.success) {
+          setNotification({ type: 'error', message: res.error || 'Failed to send recovery email.' });
+        } else {
+          setNotification({
+            type: 'success',
+            message: '📩 Password reset link sent! Please check your email inbox to set a new password.'
+          });
+        }
+      } else if (mode === 'update-password') {
+        if (password !== confirmPassword) {
+          setNotification({ type: 'error', message: 'Passwords do not match.' });
+          return;
+        }
+        const res = await updatePassword(password);
+        if (!res.success) {
+          setNotification({ type: 'error', message: res.error || 'Failed to update password.' });
+        } else {
+          setNotification({
+            type: 'success',
+            message: '✅ Password updated successfully! Redirecting to dashboard...'
+          });
+          setTimeout(() => navigate('/dashboard'), 1500);
+        }
       }
-      navigate('/dashboard');
     } finally {
       setSubmitting(false);
     }
@@ -33,7 +88,7 @@ export const AuthPage: React.FC = () => {
     loginAsDemo();
     setTimeout(() => {
       navigate('/dashboard');
-    }, 400);
+    }, 350);
   };
 
   return (
@@ -41,43 +96,99 @@ export const AuthPage: React.FC = () => {
       <div className="max-w-md w-full bg-white p-8 sm:p-10 rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/50 relative animate-fade-in-up">
         
         {/* Brand Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-6">
           <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center text-white mx-auto mb-4 shadow-md shadow-blue-500/20">
             <ArrowLeftRight className="w-6 h-6" />
           </div>
+          
           <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">
-            {isSignUp ? 'Create your Account' : 'Welcome to HoverCurrency'}
+            {mode === 'signup' && 'Create Your Account'}
+            {mode === 'signin' && 'Welcome to HoverCurrency'}
+            {mode === 'forgot-password' && 'Reset Your Password'}
+            {mode === 'update-password' && 'Set New Password'}
           </h2>
+          
           <p className="text-xs sm:text-sm text-slate-500 mt-1.5 leading-relaxed">
-            {isSignUp
-              ? 'Start converting currencies instantly across the web'
-              : 'Sign in to access your dashboard and extension sync'}
+            {mode === 'signup' && 'Start converting currencies instantly across the web'}
+            {mode === 'signin' && 'Sign in to access your dashboard and extension sync'}
+            {mode === 'forgot-password' && 'Enter your email to receive a password reset link'}
+            {mode === 'update-password' && 'Choose a strong new password for your account'}
           </p>
         </div>
 
-        {/* Demo Login Button */}
-        <button
-          onClick={handleDemoLogin}
-          type="button"
-          disabled={submitting || isLoading}
-          className="w-full py-3 rounded-xl font-semibold text-xs sm:text-sm bg-blue-50 hover:bg-blue-100/70 text-blue-700 border border-blue-200 mb-6 flex items-center justify-center gap-2 transition-all shadow-sm active:scale-[0.99]"
-        >
-          <Sparkles className="w-4 h-4 text-blue-600" />
-          <span>Instant One-Click Demo Sign In</span>
-        </button>
+        {/* Segmented Mode Switcher (for signin/signup) */}
+        {(mode === 'signin' || mode === 'signup') && (
+          <div className="flex bg-slate-100 p-1 rounded-xl mb-6">
+            <button
+              type="button"
+              onClick={() => { setMode('signin'); setNotification(null); }}
+              className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${
+                mode === 'signin'
+                  ? 'bg-white text-slate-900 shadow-sm'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Sign In
+            </button>
+            <button
+              type="button"
+              onClick={() => { setMode('signup'); setNotification(null); }}
+              className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${
+                mode === 'signup'
+                  ? 'bg-white text-slate-900 shadow-sm'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Create Account
+            </button>
+          </div>
+        )}
 
-        {/* Divider */}
-        <div className="flex items-center gap-3 mb-6">
-          <div className="h-px bg-slate-200 flex-1" />
-          <span className="text-[11px] text-slate-400 uppercase tracking-wider font-semibold">
-            Or with credentials
-          </span>
-          <div className="h-px bg-slate-200 flex-1" />
-        </div>
+        {/* Notification Alert Banner */}
+        {notification && (
+          <div
+            className={`p-3.5 rounded-xl text-xs font-medium mb-5 flex items-start gap-2.5 animate-fade-in ${
+              notification.type === 'success'
+                ? 'bg-emerald-50 border border-emerald-200 text-emerald-800'
+                : 'bg-red-50 border border-red-200 text-red-700'
+            }`}
+          >
+            {notification.type === 'success' ? (
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+            ) : (
+              <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+            )}
+            <span className="leading-relaxed">{notification.message}</span>
+          </div>
+        )}
 
-        {/* Credentials Form */}
+        {/* Demo Login Button (Only on Sign In) */}
+        {mode === 'signin' && (
+          <>
+            <button
+              onClick={handleDemoLogin}
+              type="button"
+              disabled={submitting || isLoading}
+              className="w-full py-2.5 rounded-xl font-semibold text-xs sm:text-sm bg-blue-50 hover:bg-blue-100/70 text-blue-700 border border-blue-200 mb-6 flex items-center justify-center gap-2 transition-all shadow-sm active:scale-[0.99]"
+            >
+              <Sparkles className="w-4 h-4 text-blue-600" />
+              <span>Instant One-Click Demo Sign In</span>
+            </button>
+
+            {/* Divider */}
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-px bg-slate-200 flex-1" />
+              <span className="text-[11px] text-slate-400 uppercase tracking-wider font-semibold">
+                Or with email
+              </span>
+              <div className="h-px bg-slate-200 flex-1" />
+            </div>
+          </>
+        )}
+
+        {/* Auth Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          {isSignUp && (
+          {mode === 'signup' && (
             <div>
               <label className="text-xs font-semibold text-slate-700 block mb-1.5">
                 Full Name
@@ -96,39 +207,73 @@ export const AuthPage: React.FC = () => {
             </div>
           )}
 
-          <div>
-            <label className="text-xs font-semibold text-slate-700 block mb-1.5">
-              Email Address
-            </label>
-            <div className="relative">
-              <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="name@example.com"
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-3.5 py-2.5 text-sm font-medium text-slate-900 placeholder-slate-400 outline-none focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all"
-              />
+          {mode !== 'update-password' && (
+            <div>
+              <label className="text-xs font-semibold text-slate-700 block mb-1.5">
+                Email Address
+              </label>
+              <div className="relative">
+                <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="name@example.com"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-3.5 py-2.5 text-sm font-medium text-slate-900 placeholder-slate-400 outline-none focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all"
+                />
+              </div>
             </div>
-          </div>
+          )}
 
-          <div>
-            <label className="text-xs font-semibold text-slate-700 block mb-1.5">
-              Password
-            </label>
-            <div className="relative">
-              <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-3.5 py-2.5 text-sm font-medium text-slate-900 placeholder-slate-400 outline-none focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all"
-              />
+          {(mode === 'signin' || mode === 'signup' || mode === 'update-password') && (
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-xs font-semibold text-slate-700 block">
+                  {mode === 'update-password' ? 'New Password' : 'Password'}
+                </label>
+                {mode === 'signin' && (
+                  <button
+                    type="button"
+                    onClick={() => { setMode('forgot-password'); setNotification(null); }}
+                    className="text-xs text-blue-600 hover:text-blue-700 font-semibold"
+                  >
+                    Forgot Password?
+                  </button>
+                )}
+              </div>
+              <div className="relative">
+                <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+                <input
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-3.5 py-2.5 text-sm font-medium text-slate-900 placeholder-slate-400 outline-none focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all"
+                />
+              </div>
             </div>
-          </div>
+          )}
+
+          {mode === 'update-password' && (
+            <div>
+              <label className="text-xs font-semibold text-slate-700 block mb-1.5">
+                Confirm New Password
+              </label>
+              <div className="relative">
+                <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+                <input
+                  type="password"
+                  required
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-3.5 py-2.5 text-sm font-medium text-slate-900 placeholder-slate-400 outline-none focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all"
+                />
+              </div>
+            </div>
+          )}
 
           <button
             type="submit"
@@ -139,24 +284,31 @@ export const AuthPage: React.FC = () => {
               <div className="w-5 h-5 rounded-full border-2 border-white/30 border-t-white animate-spin" />
             ) : (
               <>
-                <span>{isSignUp ? 'Create Free Account' : 'Sign In'}</span>
+                <span>
+                  {mode === 'signin' && 'Sign In'}
+                  {mode === 'signup' && 'Create Account'}
+                  {mode === 'forgot-password' && 'Send Reset Email'}
+                  {mode === 'update-password' && 'Update Password'}
+                </span>
                 <ArrowRight className="w-4 h-4" />
               </>
             )}
           </button>
         </form>
 
-        {/* Toggle Mode */}
-        <div className="text-center mt-6 text-xs text-slate-500">
-          {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
-          <button
-            type="button"
-            onClick={() => setIsSignUp(!isSignUp)}
-            className="text-blue-600 hover:text-blue-700 font-bold ml-1 transition-colors"
-          >
-            {isSignUp ? 'Sign In' : 'Sign Up Free'}
-          </button>
-        </div>
+        {/* Back Link for Forgot Password */}
+        {(mode === 'forgot-password' || mode === 'update-password') && (
+          <div className="text-center mt-6">
+            <button
+              type="button"
+              onClick={() => { setMode('signin'); setNotification(null); }}
+              className="text-xs font-semibold text-slate-600 hover:text-blue-600 inline-flex items-center gap-1.5 transition-colors"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Back to Sign In</span>
+            </button>
+          </div>
+        )}
 
       </div>
     </div>
