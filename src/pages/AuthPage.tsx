@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext.js';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
-import { ArrowLeftRight, Lock, Mail, User, Sparkles, CheckCircle2, ArrowRight, KeyRound, AlertCircle, ArrowLeft } from 'lucide-react';
+import { ArrowLeftRight, Lock, Mail, User, CheckCircle2, ArrowRight, KeyRound, AlertCircle, ArrowLeft } from 'lucide-react';
 
 type AuthMode = 'signin' | 'signup' | 'forgot-password' | 'update-password';
 
@@ -18,7 +18,7 @@ export const AuthPage: React.FC = () => {
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   
-  const { login, signup, loginWithGoogle, forgotPassword, updatePassword, loginAsDemo, isLoading } = useAuth();
+  const { login, signup, loginWithGoogle, forgotPassword, updatePassword, isLoading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -87,14 +87,6 @@ export const AuthPage: React.FC = () => {
     } finally {
       setSubmitting(false);
     }
-  };
-
-  const handleDemoLogin = () => {
-    setSubmitting(true);
-    loginAsDemo();
-    setTimeout(() => {
-      navigate('/dashboard');
-    }, 350);
   };
 
   const handleGoogleSignIn = async () => {
@@ -181,9 +173,9 @@ export const AuthPage: React.FC = () => {
           </div>
         )}
 
-        {/* Quick OAuth & Demo Sign-In */}
+        {/* Quick Google Sign-In */}
         {(mode === 'signin' || mode === 'signup') && (
-          <div className="space-y-2.5 mb-6">
+          <div className="mb-6">
             <button
               onClick={handleGoogleSignIn}
               type="button"
@@ -199,20 +191,8 @@ export const AuthPage: React.FC = () => {
               <span>{mode === 'signup' ? 'Sign up with Google' : 'Continue with Google'}</span>
             </button>
 
-            {mode === 'signin' && (
-              <button
-                onClick={handleDemoLogin}
-                type="button"
-                disabled={submitting || isLoading}
-                className="w-full py-2.5 px-4 rounded-xl font-semibold text-xs sm:text-sm bg-blue-50 hover:bg-blue-100/70 text-blue-700 border border-blue-200 flex items-center justify-center gap-2 transition-all shadow-sm active:scale-[0.99]"
-              >
-                <Sparkles className="w-4 h-4 text-blue-600" />
-                <span>Instant One-Click Demo Sign In</span>
-              </button>
-            )}
-
             {/* Divider */}
-            <div className="flex items-center gap-3 pt-2">
+            <div className="flex items-center gap-3 pt-5">
               <div className="h-px bg-slate-200 flex-1" />
               <span className="text-[11px] text-slate-400 uppercase tracking-wider font-semibold">
                 Or with email
