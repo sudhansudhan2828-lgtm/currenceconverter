@@ -156,7 +156,7 @@ export const APP_CONFIG = {
   dualRateEngine: DEFAULT_DUAL_RATE_CONFIG,
   dodoPayments: {
     sandboxUrl: 'https://test.dodopayments.com',
-    productionUrl: 'https://api.dodopayments.com',
+    productionUrl: 'https://live.dodopayments.com',
     defaultProductId: 'p_quarterly_pro_9'
   }
 };
