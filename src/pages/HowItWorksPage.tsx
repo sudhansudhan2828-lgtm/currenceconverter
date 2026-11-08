@@ -14,11 +14,11 @@ import { Link } from 'react-router-dom';
 
 export const HowItWorksPage: React.FC = () => {
   return (
-    <div className="bg-white min-h-[85vh] py-12 px-4 sm:px-6 lg:px-8">
+    <div className="bg-white min-h-[85vh] py-12 px-4 sm:px-6 lg:px-8 animate-fade-in">
       <div className="max-w-5xl mx-auto space-y-16">
         
         {/* Header */}
-        <div className="text-center space-y-3">
+        <div className="text-center space-y-3 animate-fade-in-up">
           <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
             How It Works
           </div>
@@ -33,7 +33,7 @@ export const HowItWorksPage: React.FC = () => {
         {/* 3 Step Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
           {/* Step 1 */}
-          <div className="bg-white p-7 rounded-2xl border border-slate-200 shadow-sm relative space-y-4">
+          <div className="bg-white p-7 rounded-2xl border border-slate-200 shadow-sm relative space-y-4 hc-card-hover animate-fade-in-up">
             <div className="flex items-center justify-between">
               <span className="w-7 h-7 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center">
                 1
@@ -54,7 +54,7 @@ export const HowItWorksPage: React.FC = () => {
           </div>
 
           {/* Step 2 */}
-          <div className="bg-white p-7 rounded-2xl border border-slate-200 shadow-sm relative space-y-4">
+          <div className="bg-white p-7 rounded-2xl border border-slate-200 shadow-sm relative space-y-4 hc-card-hover animate-fade-in-up" style={{ animationDelay: '100ms' }}>
             <div className="flex items-center justify-between">
               <span className="w-7 h-7 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center">
                 2
@@ -70,7 +70,7 @@ export const HowItWorksPage: React.FC = () => {
           </div>
 
           {/* Step 3 */}
-          <div className="bg-white p-7 rounded-2xl border border-slate-200 shadow-sm relative space-y-4">
+          <div className="bg-white p-7 rounded-2xl border border-slate-200 shadow-sm relative space-y-4 hc-card-hover animate-fade-in-up" style={{ animationDelay: '200ms' }}>
             <div className="flex items-center justify-between">
               <span className="w-7 h-7 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center">
                 3
@@ -96,7 +96,7 @@ export const HowItWorksPage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Feature 1 */}
-            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3 hc-card-hover">
               <Zap className="w-6 h-6 text-blue-600" />
               <h3 className="font-bold text-slate-900 text-base">Instant Conversion</h3>
               <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
@@ -105,7 +105,7 @@ export const HowItWorksPage: React.FC = () => {
             </div>
 
             {/* Feature 2 */}
-            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3 hc-card-hover">
               <Layers className="w-6 h-6 text-indigo-600" />
               <h3 className="font-bold text-slate-900 text-base">Personal Rate</h3>
               <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
@@ -114,7 +114,7 @@ export const HowItWorksPage: React.FC = () => {
             </div>
 
             {/* Feature 3 */}
-            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3 hc-card-hover">
               <Clock className="w-6 h-6 text-indigo-600" />
               <h3 className="font-bold text-slate-900 text-base">24-Hour Validity</h3>
               <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
@@ -123,7 +123,7 @@ export const HowItWorksPage: React.FC = () => {
             </div>
 
             {/* Feature 4 */}
-            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3 hc-card-hover">
               <BarChart3 className="w-6 h-6 text-blue-600" />
               <h3 className="font-bold text-slate-900 text-base">Conversion History</h3>
               <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
@@ -132,7 +132,7 @@ export const HowItWorksPage: React.FC = () => {
             </div>
 
             {/* Feature 5 */}
-            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3 hc-card-hover">
               <Bell className="w-6 h-6 text-emerald-600" />
               <h3 className="font-bold text-slate-900 text-base">Daily Reminder</h3>
               <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
@@ -141,7 +141,7 @@ export const HowItWorksPage: React.FC = () => {
             </div>
 
             {/* Feature 6 */}
-            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3 hc-card-hover">
               <Crown className="w-6 h-6 text-amber-500" />
               <h3 className="font-bold text-slate-900 text-base">Pro: Unlimited</h3>
               <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
@@ -155,3 +155,4 @@ export const HowItWorksPage: React.FC = () => {
     </div>
   );
 };
+

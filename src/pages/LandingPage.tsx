@@ -20,13 +20,13 @@ export const LandingPage: React.FC = () => {
   const converted = (convertAmount * rate).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   return (
-    <div className="bg-white text-slate-900">
+    <div className="bg-white text-slate-900 animate-fade-in">
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 lg:pt-16 lg:pb-24">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
           {/* Left Column */}
-          <div className="lg:col-span-7 space-y-6">
+          <div className="lg:col-span-7 space-y-6 animate-fade-in-up">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
               <Zap className="w-3.5 h-3.5 fill-blue-600 text-blue-600" />
               <span>Chrome Extension</span>
@@ -79,8 +79,8 @@ export const LandingPage: React.FC = () => {
           </div>
 
           {/* Right Column: Preview of the Extension Popup */}
-          <div className="lg:col-span-5 flex justify-center">
-            <div className="w-full max-w-sm rounded-2xl bg-white border border-slate-200 shadow-xl overflow-hidden">
+          <div className="lg:col-span-5 flex justify-center animate-fade-in-up" style={{ animationDelay: '150ms' }}>
+            <div className="w-full max-w-sm rounded-2xl bg-white border border-slate-200 shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden animate-float">
               {/* Extension Top Header */}
               <div className="px-4 py-3 bg-white border-b border-slate-100 flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -152,7 +152,7 @@ export const LandingPage: React.FC = () => {
           {/* 3 Steps */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
             {/* Step 1 */}
-            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm relative space-y-3">
+            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm relative space-y-3 hc-card-hover">
               <div className="flex items-center justify-between">
                 <span className="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center">
                   1
@@ -172,7 +172,7 @@ export const LandingPage: React.FC = () => {
             </div>
 
             {/* Step 2 */}
-            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm relative space-y-3">
+            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm relative space-y-3 hc-card-hover">
               <div className="flex items-center justify-between">
                 <span className="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center">
                   2
@@ -186,7 +186,7 @@ export const LandingPage: React.FC = () => {
             </div>
 
             {/* Step 3 */}
-            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm relative space-y-3">
+            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm relative space-y-3 hc-card-hover">
               <div className="flex items-center justify-between">
                 <span className="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center">
                   3
@@ -202,25 +202,25 @@ export const LandingPage: React.FC = () => {
 
           {/* 4 Feature Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4">
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2 hc-card-hover">
               <Zap className="w-5 h-5 text-blue-600" />
               <h4 className="font-bold text-slate-900 text-sm">Instant Conversion</h4>
               <p className="text-xs text-slate-500">Convert while browsing any website.</p>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2 hc-card-hover">
               <ShieldCheck className="w-5 h-5 text-emerald-600" />
               <h4 className="font-bold text-slate-900 text-sm">Your Personal Rate</h4>
               <p className="text-xs text-slate-500">Use the rate you trust (from Google).</p>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2 hc-card-hover">
               <Clock className="w-5 h-5 text-blue-600" />
               <h4 className="font-bold text-slate-900 text-sm">24-Hour Freshness</h4>
               <p className="text-xs text-slate-500">Rate stays valid for 24 hours.</p>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2 hc-card-hover">
               <Crown className="w-5 h-5 text-amber-500" />
               <h4 className="font-bold text-slate-900 text-sm">Pro for More</h4>
               <p className="text-xs text-slate-500">Unlimited conversions with the Pro plan.</p>

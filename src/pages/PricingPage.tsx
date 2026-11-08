@@ -32,10 +32,10 @@ export const PricingPage: React.FC = () => {
   };
 
   return (
-    <div className="bg-white min-h-[85vh] py-12 px-4 sm:px-6 lg:px-8">
+    <div className="bg-white min-h-[85vh] py-12 px-4 sm:px-6 lg:px-8 animate-fade-in">
       <div className="max-w-5xl mx-auto space-y-12">
         {/* Header */}
-        <div className="text-center space-y-3">
+        <div className="text-center space-y-3 animate-fade-in-up">
           <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
             Pricing
           </div>
@@ -57,7 +57,7 @@ export const PricingPage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto items-stretch">
           
           {/* FREE PLAN */}
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 flex flex-col justify-between">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 flex flex-col justify-between hc-card-hover animate-fade-in-up">
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <Leaf className="w-5 h-5 text-emerald-600" />
@@ -112,7 +112,7 @@ export const PricingPage: React.FC = () => {
           </div>
 
           {/* PRO PLAN */}
-          <div className="bg-white rounded-2xl border-2 border-blue-600 shadow-md flex flex-col justify-between overflow-hidden relative">
+          <div className="bg-white rounded-2xl border-2 border-blue-600 shadow-md flex flex-col justify-between overflow-hidden relative hc-card-hover animate-fade-in-up" style={{ animationDelay: '100ms' }}>
             {/* Top Blue Header */}
             <div className="bg-blue-600 text-white p-6 sm:p-8 relative">
               <div className="flex items-center justify-between mb-1">
