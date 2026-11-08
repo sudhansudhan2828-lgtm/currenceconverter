@@ -19,8 +19,15 @@ export const AuthPage: React.FC = () => {
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   
-  const { login, signup, loginWithGoogle, verifyOtp, forgotPassword, updatePassword, isLoading } = useAuth();
+  const { user, login, signup, loginWithGoogle, verifyOtp, forgotPassword, updatePassword, isLoading } = useAuth();
   const navigate = useNavigate();
+
+  // If already authenticated via Google OAuth or active session, redirect to dashboard
+  useEffect(() => {
+    if (user && mode !== 'update-password') {
+      navigate('/dashboard');
+    }
+  }, [user, mode, navigate]);
 
   useEffect(() => {
     const isRecoveryHash = window.location.hash.includes('type=recovery') || window.location.hash.includes('access_token');
