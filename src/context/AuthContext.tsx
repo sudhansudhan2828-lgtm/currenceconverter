@@ -26,6 +26,7 @@ interface AuthContextType {
   login: (email: string, pass: string) => Promise<AuthResult>;
   signup: (email: string, pass: string, name: string) => Promise<AuthResult>;
   loginWithGoogle: () => Promise<AuthResult>;
+  loginWithGoogleIdToken: (idToken: string) => Promise<AuthResult>;
   verifyOtp: (email: string, token: string, type?: 'signup' | 'recovery' | 'email') => Promise<AuthResult>;
   forgotPassword: (email: string) => Promise<AuthResult>;
   updatePassword: (newPassword: string) => Promise<AuthResult>;
@@ -244,7 +245,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  // Google OAuth Login
+  // Google OAuth Login (Redirect method)
   const loginWithGoogle = async (): Promise<AuthResult> => {
     setIsLoading(true);
     try {
@@ -260,6 +261,39 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
 
       return { success: true };
+    } catch (err: any) {
+      return { success: false, error: formatAuthError(err, 'Google sign in failed.') };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Google Sign-In with ID Token (Directly on currenceconverter.me, no redirect to Supabase URL)
+  const loginWithGoogleIdToken = async (idToken: string): Promise<AuthResult> => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase.auth.signInWithIdToken({
+        provider: 'google',
+        token: idToken
+      });
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      if (data.user) {
+        const profile: UserProfile = {
+          id: data.user.id,
+          email: data.user.email || '',
+          name: data.user.user_metadata?.name || data.user.email?.split('@')[0] || 'User',
+          avatarUrl: data.user.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.user.email}`
+        };
+        setUser(profile);
+        localStorage.setItem('hc_user', JSON.stringify(profile));
+        return { success: true };
+      }
+
+      return { success: false, error: 'Sign in could not be completed.' };
     } catch (err: any) {
       return { success: false, error: formatAuthError(err, 'Google sign in failed.') };
     } finally {
@@ -396,6 +430,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         login,
         signup,
         loginWithGoogle,
+        loginWithGoogleIdToken,
         verifyOtp,
         forgotPassword,
         updatePassword,
