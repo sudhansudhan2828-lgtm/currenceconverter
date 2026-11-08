@@ -5,7 +5,7 @@ import { createDodoCheckout, simulateProUpgrade } from '../services/api.js';
 import { useNavigate } from 'react-router-dom';
 
 export const PricingPage: React.FC = () => {
-  const { user, subscription, refreshStatus } = useAuth();
+  const { user, subscription, refreshStatus, resetToFree } = useAuth();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errMessage, setErrMessage] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -118,14 +118,14 @@ export const PricingPage: React.FC = () => {
 
           <button
             disabled={!isPro}
-            onClick={() => navigate('/extension')}
+            onClick={resetToFree}
             className={`w-full py-3.5 rounded-xl font-bold text-sm text-center transition-colors ${
               !isPro
                 ? 'bg-slate-800/80 text-slate-400 cursor-default border border-slate-700/60'
-                : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700'
+                : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 cursor-pointer'
             }`}
           >
-            {!isPro ? 'Current Plan (Active)' : 'Revert to Free'}
+            {!isPro ? 'Current Plan (Active)' : 'Revert to Free Tier'}
           </button>
         </div>
 
@@ -185,9 +185,18 @@ export const PricingPage: React.FC = () => {
 
           <div className="space-y-3">
             {isPro ? (
-              <div className="w-full py-3.5 rounded-xl font-bold text-sm text-center bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center justify-center gap-2">
-                <CheckCircle2 className="w-4 h-4" />
-                <span>Your Pro Subscription is Active</span>
+              <div className="space-y-3">
+                <div className="w-full py-3.5 rounded-xl font-bold text-sm text-center bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center justify-center gap-2">
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>Your Pro Subscription is Active</span>
+                </div>
+                <button
+                  onClick={resetToFree}
+                  className="w-full py-2.5 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors flex items-center justify-center gap-1.5"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" />
+                  <span>Switch back to Free Plan (Reset)</span>
+                </button>
               </div>
             ) : (
               <button

@@ -1,6 +1,7 @@
 import { ConversionResponse, UserUsage, UserSubscription, UserPreferences, APP_CONFIG, exchangeRateService } from '@currency-converter/shared';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+const DIRECT_PAYMENT_URL = import.meta.env.VITE_DODO_PAYMENT_URL || '';
 
 export async function convertCurrency(
   from: string,
@@ -74,6 +75,12 @@ export async function fetchUserStatus(userId: string): Promise<{
 }
 
 export async function createDodoCheckout(userId: string, email: string): Promise<{ checkoutUrl: string }> {
+  // 1. Direct Dodo Payment Link (if configured)
+  if (DIRECT_PAYMENT_URL) {
+    const separator = DIRECT_PAYMENT_URL.includes('?') ? '&' : '?';
+    return { checkoutUrl: `${DIRECT_PAYMENT_URL}${separator}metadata[user_id]=${encodeURIComponent(userId)}&customer_email=${encodeURIComponent(email)}` };
+  }
+
   const returnUrl = `${window.location.origin}/checkout-simulation?user_id=${userId}&plan=pro`;
   try {
     const res = await fetch(`${API_BASE}/checkout/create-subscription`, {
@@ -117,6 +124,19 @@ export async function pairExtensionDevice(userId: string): Promise<string> {
 export async function simulateProUpgrade(userId: string): Promise<boolean> {
   try {
     const res = await fetch(`${API_BASE}/checkout/simulate-success`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId })
+    });
+    return res.ok;
+  } catch {
+    return true;
+  }
+}
+
+export async function simulateFreeReset(userId: string): Promise<boolean> {
+  try {
+    const res = await fetch(`${API_BASE}/checkout/simulate-free`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId })

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { UserSubscription, UserUsage, UserPreferences, APP_CONFIG } from '@currency-converter/shared';
-import { fetchUserStatus } from '../services/api.js';
+import { fetchUserStatus, simulateFreeReset } from '../services/api.js';
 
 export interface UserProfile {
   id: string;
@@ -20,6 +20,7 @@ interface AuthContextType {
   loginAsDemo: () => void;
   logout: () => void;
   refreshStatus: () => Promise<void>;
+  resetToFree: () => Promise<void>;
   setPreferences: (prefs: UserPreferences) => void;
 }
 
@@ -72,6 +73,29 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     } catch (err) {
       console.warn('Failed to refresh status:', err);
     }
+  };
+
+  const resetToFree = async () => {
+    if (user) {
+      try {
+        await simulateFreeReset(user.id);
+      } catch (e) {
+        console.warn('Reset error:', e);
+      }
+    }
+    setSubscription({
+      plan: 'free',
+      status: 'active',
+      currentPeriodStart: new Date().toISOString(),
+      currentPeriodEnd: new Date(Date.now() + 30 * 86400000).toISOString()
+    });
+    setUsage((prev) => ({
+      ...prev,
+      plan: 'free',
+      limit: 29,
+      remaining: Math.max(0, 29 - prev.count),
+      isLimitReached: prev.count >= 29
+    }));
   };
 
   useEffect(() => {
@@ -133,6 +157,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         loginAsDemo,
         logout,
         refreshStatus,
+        resetToFree,
         setPreferences
       }}
     >
