@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeftRight, 
@@ -31,6 +31,27 @@ export const DashboardPage: React.FC = () => {
   const isPro = subscription.plan === 'pro';
   const rate = 87.12;
   const converted = (convertAmount * rate).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  // Broadcast Pro plan status to Chrome/Edge extension content script
+  useEffect(() => {
+    if (subscription?.plan) {
+      document.documentElement.setAttribute('data-hc-plan', subscription.plan);
+      window.postMessage({
+        type: 'HOVERCURRENCY_EXTENSION_SYNC',
+        plan: subscription.plan,
+        userId: user?.id,
+        status: subscription.status
+      }, '*');
+
+      document.dispatchEvent(new CustomEvent('HOVERCURRENCY_EXTENSION_SYNC', {
+        detail: {
+          plan: subscription.plan,
+          userId: user?.id,
+          status: subscription.status
+        }
+      }));
+    }
+  }, [subscription, user]);
 
   return (
     <div className="bg-slate-50/50 min-h-[88vh] py-8 px-4 sm:px-6 lg:px-8">
@@ -154,7 +175,7 @@ export const DashboardPage: React.FC = () => {
                   <span className="font-bold text-sm text-slate-900">Monthly Conversions</span>
                 </div>
                 <span className="text-sm font-bold text-slate-900">
-                  {usage.count} / {usage.limit === Infinity ? '∞' : usage.limit} used
+                  {isPro ? `${usage.count} used (Unlimited)` : `${usage.count} / ${usage.limit || 29} used`}
                 </span>
               </div>
 
@@ -162,18 +183,22 @@ export const DashboardPage: React.FC = () => {
               <div className="space-y-1.5">
                 <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
                   <div 
-                    className="h-full bg-blue-600 rounded-full transition-all duration-500"
-                    style={{ width: `${Math.min(100, (usage.count / 29) * 100)}%` }}
+                    className={`h-full rounded-full transition-all duration-500 ${isPro ? 'bg-gradient-to-r from-blue-600 to-indigo-600 w-full' : 'bg-blue-600'}`}
+                    style={isPro ? { width: '100%' } : { width: `${Math.min(100, (usage.count / 29) * 100)}%` }}
                   />
                 </div>
               </div>
 
               <div className="flex items-center justify-between text-xs">
                 <span className="text-slate-500 font-medium">
-                  {usage.remaining === Infinity ? 'Unlimited remaining' : `${usage.remaining} remaining`}
+                  {isPro || !usage.remaining || usage.remaining === Infinity ? 'Unlimited remaining' : `${usage.remaining} remaining`}
                 </span>
-                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">
-                  {isPro ? 'Pro Plan' : 'Free Plan'}
+                <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${
+                  isPro 
+                    ? 'bg-purple-50 text-purple-700 border-purple-200' 
+                    : 'bg-slate-100 text-slate-700 border-slate-200'
+                }`}>
+                  {isPro ? 'Pro Plan Active' : 'Free Plan'}
                 </span>
               </div>
             </div>
