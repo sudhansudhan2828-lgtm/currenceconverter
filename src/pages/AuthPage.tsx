@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext.js';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { ArrowLeftRight, Lock, Mail, User, CheckCircle2, ArrowRight, KeyRound, AlertCircle, ArrowLeft } from 'lucide-react';
 
-type AuthMode = 'signin' | 'signup' | 'forgot-password' | 'update-password';
+type AuthMode = 'signin' | 'signup' | 'verify-otp' | 'forgot-password' | 'update-password';
 
 export const AuthPage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -14,11 +14,12 @@ export const AuthPage: React.FC = () => {
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [name, setName] = useState<string>('');
+  const [otpCode, setOtpCode] = useState<string>('');
   
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   
-  const { login, signup, loginWithGoogle, forgotPassword, updatePassword, isLoading } = useAuth();
+  const { login, signup, loginWithGoogle, verifyOtp, forgotPassword, updatePassword, isLoading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -44,12 +45,25 @@ export const AuthPage: React.FC = () => {
         if (!res.success) {
           setNotification({ type: 'error', message: res.error || 'Sign up failed.' });
         } else if (res.requiresEmailConfirmation) {
+          setMode('verify-otp');
           setNotification({ 
             type: 'success', 
-            message: '🎉 Confirmation email sent! Please check your inbox (and Spam folder) to verify your account.' 
+            message: `🎉 Verification code sent to ${email}! Enter the 6-digit OTP from your email below.` 
           });
         } else {
           navigate('/dashboard');
+        }
+      } else if (mode === 'verify-otp') {
+        if (!otpCode || otpCode.length < 6) {
+          setNotification({ type: 'error', message: 'Please enter the complete 6-digit verification code.' });
+          return;
+        }
+        const res = await verifyOtp(email, otpCode, 'signup');
+        if (!res.success) {
+          setNotification({ type: 'error', message: res.error || 'Invalid or expired OTP code. Please try again.' });
+        } else {
+          setNotification({ type: 'success', message: '🎉 Account verified successfully! Taking you to your dashboard...' });
+          setTimeout(() => navigate('/dashboard'), 1200);
         }
       } else if (mode === 'signin') {
         const res = await login(email, password);
@@ -115,6 +129,7 @@ export const AuthPage: React.FC = () => {
           <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">
             {mode === 'signup' && 'Create Your Account'}
             {mode === 'signin' && 'Welcome to HoverCurrency'}
+            {mode === 'verify-otp' && 'Verify Your Email'}
             {mode === 'forgot-password' && 'Reset Your Password'}
             {mode === 'update-password' && 'Set New Password'}
           </h2>
@@ -122,6 +137,7 @@ export const AuthPage: React.FC = () => {
           <p className="text-xs sm:text-sm text-slate-500 mt-1.5 leading-relaxed">
             {mode === 'signup' && 'Start converting currencies instantly across the web'}
             {mode === 'signin' && 'Sign in to access your dashboard and extension sync'}
+            {mode === 'verify-otp' && `Enter the 6-digit OTP code sent to ${email}`}
             {mode === 'forgot-password' && 'Enter your email to receive a password reset link'}
             {mode === 'update-password' && 'Choose a strong new password for your account'}
           </p>
@@ -204,6 +220,66 @@ export const AuthPage: React.FC = () => {
 
         {/* Auth Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
+          {mode === 'verify-otp' && (
+            <div className="space-y-4">
+              <div>
+                <label className="text-xs font-semibold text-slate-700 block mb-2 text-center">
+                  6-Digit Verification Code
+                </label>
+                <div className="relative">
+                  <KeyRound className="w-5 h-5 text-blue-500 absolute left-3.5 top-3.5" />
+                  <input
+                    type="text"
+                    required
+                    maxLength={6}
+                    autoFocus
+                    value={otpCode}
+                    onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
+                    placeholder="123456"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-11 pr-4 py-3 text-center text-2xl font-bold tracking-[0.35em] text-slate-900 placeholder-slate-300 outline-none focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all font-mono"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={submitting || isLoading || otpCode.length < 6}
+                className="w-full py-3 rounded-xl font-semibold text-sm bg-blue-600 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white shadow-md shadow-blue-500/20 active:scale-[0.99] transition-all flex items-center justify-center gap-2"
+              >
+                {submitting ? (
+                  <div className="w-5 h-5 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                ) : (
+                  <>
+                    <span>Verify & Activate Account</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+
+              <div className="text-center pt-2">
+                <button
+                  type="button"
+                  onClick={async () => {
+                    setNotification(null);
+                    setSubmitting(true);
+                    try {
+                      await signup(email, password, name);
+                      setNotification({
+                        type: 'success',
+                        message: '📩 A new 6-digit OTP code has been sent to your email.'
+                      });
+                    } finally {
+                      setSubmitting(false);
+                    }
+                  }}
+                  className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors"
+                >
+                  Didn't receive the code? Resend OTP
+                </button>
+              </div>
+            </div>
+          )}
+
           {mode === 'signup' && (
             <div>
               <label className="text-xs font-semibold text-slate-700 block mb-1.5">
@@ -223,7 +299,7 @@ export const AuthPage: React.FC = () => {
             </div>
           )}
 
-          {mode !== 'update-password' && (
+          {mode !== 'update-password' && mode !== 'verify-otp' && (
             <div>
               <label className="text-xs font-semibold text-slate-700 block mb-1.5">
                 Email Address
@@ -291,29 +367,31 @@ export const AuthPage: React.FC = () => {
             </div>
           )}
 
-          <button
-            type="submit"
-            disabled={submitting || isLoading}
-            className="w-full py-3 rounded-xl font-semibold text-sm bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20 active:scale-[0.99] transition-all mt-2 flex items-center justify-center gap-2"
-          >
-            {submitting ? (
-              <div className="w-5 h-5 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-            ) : (
-              <>
-                <span>
-                  {mode === 'signin' && 'Sign In'}
-                  {mode === 'signup' && 'Create Account'}
-                  {mode === 'forgot-password' && 'Send Reset Email'}
-                  {mode === 'update-password' && 'Update Password'}
-                </span>
-                <ArrowRight className="w-4 h-4" />
-              </>
-            )}
-          </button>
+          {mode !== 'verify-otp' && (
+            <button
+              type="submit"
+              disabled={submitting || isLoading}
+              className="w-full py-3 rounded-xl font-semibold text-sm bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20 active:scale-[0.99] transition-all mt-2 flex items-center justify-center gap-2"
+            >
+              {submitting ? (
+                <div className="w-5 h-5 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+              ) : (
+                <>
+                  <span>
+                    {mode === 'signin' && 'Sign In'}
+                    {mode === 'signup' && 'Create Account'}
+                    {mode === 'forgot-password' && 'Send Reset Email'}
+                    {mode === 'update-password' && 'Update Password'}
+                  </span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
+            </button>
+          )}
         </form>
 
-        {/* Back Link for Forgot Password */}
-        {(mode === 'forgot-password' || mode === 'update-password') && (
+        {/* Back Link for Forgot Password or OTP */}
+        {(mode === 'forgot-password' || mode === 'update-password' || mode === 'verify-otp') && (
           <div className="text-center mt-6">
             <button
               type="button"

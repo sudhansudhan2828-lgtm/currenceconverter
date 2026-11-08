@@ -26,6 +26,7 @@ interface AuthContextType {
   login: (email: string, pass: string) => Promise<AuthResult>;
   signup: (email: string, pass: string, name: string) => Promise<AuthResult>;
   loginWithGoogle: () => Promise<AuthResult>;
+  verifyOtp: (email: string, token: string, type?: 'signup' | 'recovery' | 'email') => Promise<AuthResult>;
   forgotPassword: (email: string) => Promise<AuthResult>;
   updatePassword: (newPassword: string) => Promise<AuthResult>;
   loginAsDemo: () => void;
@@ -281,6 +282,44 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  // Verify 6-digit OTP code from email (for signup or password recovery)
+  const verifyOtp = async (
+    email: string,
+    token: string,
+    type: 'signup' | 'recovery' | 'email' = 'signup'
+  ): Promise<AuthResult> => {
+    setIsLoading(true);
+    try {
+      const otpType = type === 'recovery' ? 'recovery' : (type === 'signup' ? 'signup' : 'email');
+      const { data, error } = await supabase.auth.verifyOtp({
+        email,
+        token: token.trim(),
+        type: otpType as any
+      });
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      if (data.user) {
+        const profile: UserProfile = {
+          id: data.user.id,
+          email: data.user.email || email,
+          name: data.user.user_metadata?.name || email.split('@')[0],
+          avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`
+        };
+        setUser(profile);
+        localStorage.setItem('hc_user', JSON.stringify(profile));
+      }
+
+      return { success: true };
+    } catch (err: any) {
+      return { success: false, error: err.message || 'OTP verification failed.' };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Update Password (used after clicking email link or from settings)
   const updatePassword = async (newPassword: string): Promise<AuthResult> => {
     setIsLoading(true);
@@ -334,6 +373,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         login,
         signup,
         loginWithGoogle,
+        verifyOtp,
         forgotPassword,
         updatePassword,
         loginAsDemo,
