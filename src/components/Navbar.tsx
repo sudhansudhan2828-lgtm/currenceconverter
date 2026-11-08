@@ -1,14 +1,20 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { ArrowLeftRight, Crown } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { ArrowLeftRight, Crown, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.js';
 
 export const Navbar: React.FC = () => {
-  const { user, subscription } = useAuth();
+  const { user, subscription, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const isPro = subscription.plan === 'pro';
   const isDashboardView = ['/dashboard', '/settings', '/history'].some(p => location.pathname.startsWith(p));
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-slate-200">
@@ -113,11 +119,11 @@ export const Navbar: React.FC = () => {
         )}
 
         {/* Right CTA / User controls */}
-        {isDashboardView ? (
+        {user ? (
           <div className="flex items-center gap-3">
             <Link
               to="/pricing"
-              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${
+              className={`hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${
                 isPro
                   ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-sm'
                   : 'bg-amber-100 text-amber-800 border border-amber-200'
@@ -126,13 +132,33 @@ export const Navbar: React.FC = () => {
               <Crown className="w-3.5 h-3.5" />
               <span>{isPro ? 'Pro' : 'Free Plan'}</span>
             </Link>
+
+            {!isDashboardView && (
+              <Link
+                to="/dashboard"
+                className="hidden sm:inline-block text-xs font-semibold text-slate-700 hover:text-blue-600 px-2.5 py-1.5 rounded-lg hover:bg-slate-50 transition-colors"
+              >
+                Dashboard
+              </Link>
+            )}
+
             <Link
               to="/settings"
               className="w-8 h-8 rounded-full bg-blue-700 text-white font-bold text-xs flex items-center justify-center shadow-sm hover:opacity-90 transition-opacity"
-              title={user?.name || 'Sudhan M'}
+              title={`${user?.name || 'User'} (${user?.email || ''})`}
             >
-              {user?.name ? user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : 'SM'}
+              {user?.name ? user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : (user?.email ? user.email.slice(0, 2).toUpperCase() : 'U')}
             </Link>
+
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-red-600 hover:bg-red-50 border border-slate-200 hover:border-red-200 rounded-lg transition-colors cursor-pointer"
+              title="Sign Out"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Sign Out</span>
+            </button>
           </div>
         ) : (
           <div className="flex items-center gap-4">

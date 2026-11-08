@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeftRight, 
   Clock, 
@@ -11,15 +11,22 @@ import {
   ExternalLink,
   ChevronRight,
   TrendingUp,
-  Layers
+  Layers,
+  LogOut
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.js';
 
 export const DashboardPage: React.FC = () => {
-  const { user, subscription, usage } = useAuth();
+  const { user, subscription, usage, logout } = useAuth();
+  const navigate = useNavigate();
   const [convertAmount, setConvertAmount] = useState<number>(100);
   const [sourceCurrency, setSourceCurrency] = useState<string>('USD');
   const [targetCurrency, setTargetCurrency] = useState<string>('INR');
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
+  };
 
   const isPro = subscription.plan === 'pro';
   const rate = 87.12;
@@ -71,6 +78,15 @@ export const DashboardPage: React.FC = () => {
               <CreditCard className="w-4 h-4 text-slate-400" />
               <span>Billing</span>
             </Link>
+
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm text-red-600 hover:bg-red-50 transition-colors text-left cursor-pointer"
+            >
+              <LogOut className="w-4 h-4 text-red-500" />
+              <span>Sign Out</span>
+            </button>
           </div>
 
           {/* Pro Plan Card in Sidebar */}
@@ -96,7 +112,7 @@ export const DashboardPage: React.FC = () => {
           {/* Header */}
           <div>
             <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
-              Welcome back, Sudhan 👋
+              Welcome back, {user?.name || 'Sudhan'} 👋
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 mt-1">
               Here's your current rate and usage.

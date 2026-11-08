@@ -13,13 +13,16 @@ export const PricingPage: React.FC = () => {
   const isPro = subscription.plan === 'pro';
 
   const handleProCheckout = async () => {
+    if (!user) {
+      // Must be signed in so the payment attaches to the real user account
+      navigate('/auth?redirect=/pricing&reason=upgrade');
+      return;
+    }
+
     setIsLoading(true);
     setErrMessage(null);
     try {
-      const targetUserId = user?.id || 'usr_guest_' + Date.now();
-      const targetEmail = user?.email || 'shopper@example.com';
-
-      const checkout = await createDodoCheckout(targetUserId, targetEmail);
+      const checkout = await createDodoCheckout(user.id, user.email);
       if (checkout.checkoutUrl) {
         window.location.href = checkout.checkoutUrl;
       }
@@ -181,7 +184,7 @@ export const PricingPage: React.FC = () => {
                     {isLoading ? (
                       <RefreshCw className="w-4 h-4 animate-spin" />
                     ) : (
-                      <span>Upgrade to Pro</span>
+                      <span>{!user ? 'Sign In to Upgrade' : 'Upgrade to Pro'}</span>
                     )}
                   </button>
                 )}

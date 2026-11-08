@@ -368,6 +368,21 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
     setUser(null);
     localStorage.removeItem('hc_user');
+    setSubscription({
+      plan: 'free',
+      status: 'active',
+      currentPeriodStart: new Date().toISOString(),
+      currentPeriodEnd: new Date(Date.now() + 30 * 86400000).toISOString()
+    });
+    setUsage({
+      count: 0,
+      limit: 29,
+      remaining: 29,
+      periodStart: new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString(),
+      periodEnd: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toISOString(),
+      isLimitReached: false,
+      plan: 'free'
+    });
   };
 
   return (

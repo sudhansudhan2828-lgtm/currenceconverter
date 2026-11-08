@@ -8,6 +8,8 @@ type AuthMode = 'signin' | 'signup' | 'verify-otp' | 'forgot-password' | 'update
 export const AuthPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const initialMode = searchParams.get('mode') === 'update-password' ? 'update-password' : 'signin';
+  const redirectTarget = searchParams.get('redirect') || '/dashboard';
+  const reason = searchParams.get('reason');
   
   const [mode, setMode] = useState<AuthMode>(initialMode);
   const [email, setEmail] = useState<string>('');
@@ -22,12 +24,22 @@ export const AuthPage: React.FC = () => {
   const { user, login, signup, loginWithGoogle, verifyOtp, forgotPassword, updatePassword, isLoading } = useAuth();
   const navigate = useNavigate();
 
-  // If already authenticated via Google OAuth or active session, redirect to dashboard
+  // If already authenticated via Google OAuth or active session, redirect to destination
   useEffect(() => {
     if (user && mode !== 'update-password') {
-      navigate('/dashboard');
+      navigate(redirectTarget);
     }
-  }, [user, mode, navigate]);
+  }, [user, mode, navigate, redirectTarget]);
+
+  // Notice when redirected for upgrade
+  useEffect(() => {
+    if (reason === 'upgrade') {
+      setNotification({
+        type: 'success',
+        message: '👋 Please sign in or create an account to upgrade to Pro. Your subscription will be linked directly to your account.'
+      });
+    }
+  }, [reason]);
 
   useEffect(() => {
     const isRecoveryHash = window.location.hash.includes('type=recovery') || window.location.hash.includes('access_token');
@@ -58,7 +70,7 @@ export const AuthPage: React.FC = () => {
             message: `🎉 Verification code sent to ${email}! Enter the 8-digit OTP from your email below.` 
           });
         } else {
-          navigate('/dashboard');
+          navigate(redirectTarget);
         }
       } else if (mode === 'verify-otp') {
         if (!otpCode || otpCode.length < 6) {
@@ -70,14 +82,14 @@ export const AuthPage: React.FC = () => {
           setNotification({ type: 'error', message: res.error || 'Invalid or expired OTP code. Please try again.' });
         } else {
           setNotification({ type: 'success', message: '🎉 Account verified successfully! Taking you to your dashboard...' });
-          setTimeout(() => navigate('/dashboard'), 1200);
+          setTimeout(() => navigate(redirectTarget), 1000);
         }
       } else if (mode === 'signin') {
         const res = await login(email, password);
         if (!res.success) {
           setNotification({ type: 'error', message: res.error || 'Invalid email or password.' });
         } else {
-          navigate('/dashboard');
+          navigate(redirectTarget);
         }
       } else if (mode === 'forgot-password') {
         const res = await forgotPassword(email);

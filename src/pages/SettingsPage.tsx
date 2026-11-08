@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeftRight, 
   Clock, 
@@ -15,14 +15,21 @@ import {
   Lock,
   CheckCircle2,
   AlertCircle,
+  LogOut,
   X
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.js';
 
 export const SettingsPage: React.FC = () => {
-  const { user, subscription, resetToFree, updatePassword } = useAuth();
+  const { user, subscription, resetToFree, updatePassword, logout } = useAuth();
+  const navigate = useNavigate();
   const [targetCurrency, setTargetCurrency] = useState('INR – Indian Rupee');
   const [reminderEnabled, setReminderEnabled] = useState(true);
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
+  };
   
   // Change Password state
   const [showPasswordModal, setShowPasswordModal] = useState(false);
@@ -110,6 +117,15 @@ export const SettingsPage: React.FC = () => {
               <CreditCard className="w-4 h-4 text-slate-400" />
               <span>Billing</span>
             </Link>
+
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm text-red-600 hover:bg-red-50 transition-colors text-left"
+            >
+              <LogOut className="w-4 h-4 text-red-500" />
+              <span>Sign Out</span>
+            </button>
           </div>
 
           {/* Pro Plan Card in Sidebar */}
@@ -218,7 +234,7 @@ export const SettingsPage: React.FC = () => {
                 <div className="flex items-center justify-between py-1 border-b border-slate-100">
                   <span className="text-slate-500">Name</span>
                   <div className="flex items-center gap-2 font-semibold text-slate-900">
-                    <span>Sudhan M</span>
+                    <span>{user?.name || 'Sudhan M'}</span>
                     <Edit3 className="w-3.5 h-3.5 text-slate-400 cursor-pointer hover:text-blue-600" />
                   </div>
                 </div>
@@ -226,12 +242,12 @@ export const SettingsPage: React.FC = () => {
                 <div className="flex items-center justify-between py-1 border-b border-slate-100">
                   <span className="text-slate-500">Email</span>
                   <div className="flex items-center gap-2 font-semibold text-slate-900">
-                    <span>sudhanm@gmail.com</span>
+                    <span>{user?.email || 'sudhanm@gmail.com'}</span>
                     <Edit3 className="w-3.5 h-3.5 text-slate-400 cursor-pointer hover:text-blue-600" />
                   </div>
                 </div>
 
-                <div className="pt-1">
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
                   <button 
                     type="button"
                     onClick={() => setShowPasswordModal(true)}
@@ -239,6 +255,15 @@ export const SettingsPage: React.FC = () => {
                   >
                     <span>Change Password</span>
                     <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="text-red-600 hover:text-red-700 font-semibold text-xs flex items-center gap-1.5 transition-colors"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                    <span>Sign Out</span>
                   </button>
                 </div>
               </div>
