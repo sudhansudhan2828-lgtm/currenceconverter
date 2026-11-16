@@ -158,5 +158,6 @@ export const APP_CONFIG = {
     sandboxUrl: 'https://test.dodopayments.com',
     productionUrl: 'https://live.dodopayments.com',
     defaultProductId: 'p_quarterly_pro_9'
-  }
+  },
+  chromeWebStoreUrl: 'https://chromewebstore.google.com/detail/hovercurrency-instant-pri/pgejohfkhbeinglppdajcjobjbjcieed'
 };

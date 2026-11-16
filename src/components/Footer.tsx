@@ -28,7 +28,16 @@ export const Footer: React.FC = () => {
             <li><Link to="/" className="hover:text-blue-600 transition-colors">Home</Link></li>
             <li><Link to="/how-it-works" className="hover:text-blue-600 transition-colors">How It Works</Link></li>
             <li><Link to="/pricing" className="hover:text-blue-600 transition-colors">Pricing & Plans</Link></li>
-            <li><Link to="/extension" className="hover:text-blue-600 transition-colors">Browser Extension</Link></li>
+            <li>
+              <a
+                href="https://chromewebstore.google.com/detail/hovercurrency-instant-pri/pgejohfkhbeinglppdajcjobjbjcieed"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-blue-600 transition-colors inline-flex items-center gap-1"
+              >
+                Browser Extension <ExternalLink className="w-3 h-3" />
+              </a>
+            </li>
             <li><Link to="/dashboard" className="hover:text-blue-600 transition-colors">User Dashboard</Link></li>
           </ul>
         </div>

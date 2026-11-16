@@ -18,14 +18,24 @@ export const ExtensionDownloadPage: React.FC = () => {
           <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
             Experience instant hover conversions on Google Chrome, Microsoft Edge, Brave, and all Chromium browsers.
           </p>
-          <div className="pt-2">
+          <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+            <a
+              href="https://chromewebstore.google.com/detail/hovercurrency-instant-pri/pgejohfkhbeinglppdajcjobjbjcieed"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl font-bold text-sm bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20 active:scale-[0.99] transition-all"
+            >
+              <Chrome className="w-4 h-4" />
+              <span>Add to Chrome (Official Web Store)</span>
+            </a>
+
             <a
               href="/HoverCurrency-Extension-v1.0.0.zip"
               download="HoverCurrency-Extension-v1.0.0.zip"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20 active:scale-[0.99] transition-all"
+              className="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl font-semibold text-sm bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-all"
             >
               <Download className="w-4 h-4" />
-              <span>Download Extension (.ZIP)</span>
+              <span>Download (.ZIP)</span>
             </a>
           </div>
         </div>

@@ -104,12 +104,14 @@ export const PricingPage: React.FC = () => {
                   Downgrade to Free
                 </button>
               ) : (
-                <button
-                  onClick={() => navigate('/extension')}
-                  className="w-full py-2.5 rounded-xl font-semibold text-sm text-blue-600 border border-blue-600 hover:bg-blue-50 transition-colors"
+                <a
+                  href="https://chromewebstore.google.com/detail/hovercurrency-instant-pri/pgejohfkhbeinglppdajcjobjbjcieed"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-2.5 rounded-xl font-semibold text-sm text-center text-blue-600 border border-blue-600 hover:bg-blue-50 transition-colors block"
                 >
                   Get Started Free
-                </button>
+                </a>
               )}
             </div>
           </div>

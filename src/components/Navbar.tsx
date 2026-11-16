@@ -186,12 +186,14 @@ export const Navbar: React.FC = () => {
               >
                 Sign In
               </Link>
-              <Link
-                to="/extension"
+              <a
+                href="https://chromewebstore.google.com/detail/hovercurrency-instant-pri/pgejohfkhbeinglppdajcjobjbjcieed"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg text-sm transition-colors shadow-sm"
               >
                 Get Extension
-              </Link>
+              </a>
             </>
           )}
         </div>
@@ -383,12 +385,14 @@ export const Navbar: React.FC = () => {
                 >
                   Sign In
                 </Link>
-                <Link
-                  to="/extension"
+                <a
+                  href="https://chromewebstore.google.com/detail/hovercurrency-instant-pri/pgejohfkhbeinglppdajcjobjbjcieed"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-full py-2.5 rounded-xl font-bold text-sm text-center text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition-colors"
                 >
                   Get Extension
-                </Link>
+                </a>
               </div>
             </div>
           )}

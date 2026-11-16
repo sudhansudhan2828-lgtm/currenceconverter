@@ -1,4 +1,11 @@
 {
+  "redirects": [
+    {
+      "source": "/extension",
+      "destination": "https://chromewebstore.google.com/detail/hovercurrency-instant-pri/pgejohfkhbeinglppdajcjobjbjcieed",
+      "permanent": false
+    }
+  ],
   "rewrites": [
     {
       "source": "/(.*)",
